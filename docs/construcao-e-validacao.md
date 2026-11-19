@@ -1,6 +1,6 @@
 # Construção e validação
 
-[Voltar ao README](../README.md) · [Arquitetura](arquitetura.md) · [Configurar MCP](conexao-mcp.md) · [Usar os prompts](prompts-e-skills.md)
+[Voltar ao README](../README.md)
 
 ## 1. Diagnosticar a fonte e montar o modelo
 
@@ -13,31 +13,13 @@ Use as [consultas M exportadas](../examples/power-query/README.md) para reproduz
 3. Use `fPedidos` com **uma linha por pedido**. Separe atributos de produto, geografia e transporte nas dimensões. Preserve datas de eventos na fato e crie flags de qualidade quando aplicável.
 4. Relacione dimensões à fato em **1:*** com filtro unidirecional. Valide unicidade, chaves órfãs e propagação de filtros antes de escrever medidas.
 
-| Tabela | Chave | Atributos e uso |
-| --- | --- | --- |
-| `fPedidos` | `ID_Pedido` | Status, datas, valores, quantidades, prazos e ocorrências |
-| `dProduto` | `SKU` | Produto e categoria |
-| `dOrigem` | `CD_Origem` | Cidade, UF e região de origem |
-| `dDestino` | UF e cidade | Destino e região |
-| `dTransportadora` | Transportadora | Segmentação de operadores |
-| `dModal` | Modal | Segmentação de transporte |
-| `dStatus` | Status da entrega | Recortes de situação registrada |
-| `dCanal` | Canal de venda | Origem comercial |
-| `dCalendario` | `Data` | Anos completos, mês, trimestre e ano-mês |
-
-[![Diagrama do modelo estrela, com fatos e dimensões, gerado a partir dos relacionamentos lidos pelo MCP](../assets/modelo-relacionamentos.svg)](../assets/modelo-relacionamentos.svg)
-
-O diagrama foi montado a partir da leitura do modelo via MCP, com cardinalidade, direção e estado de cada relacionamento.
-
-A `dCalendario` foi marcada como tabela de datas. A relação ativa usa `fPedidos[Data_Pedido]`. Aprovação, expedição, previsão, entrega e devolução têm relações inativas. A data de atualização representa a posição da fonte.
+Use a [referência de relacionamentos](modelo-e-medidas.md) para configurar chaves e papéis de data. A chave `Chave_Destino` combina UF e cidade. Marque a `dCalendario` como tabela de datas e configure `Data_Pedido` como relação ativa.
 
 **Experimento mínimo.** Crie uma consulta em branco no Power Query e cole [fPedidos-demo.m](../examples/fPedidos-demo.m) no Editor Avançado. Nomeie a tabela `fPedidos` e carregue-a. Execute [kpis-demo.dax](../examples/kpis-demo.dax) na Exibição de consulta DAX. Você deve obter 8 pedidos, 4 elegíveis, 2 OTIF e 3 em carteira. A amostra demonstra o conceito com valores próprios. Para reconstruir todas as páginas, use uma fonte com os campos do modelo e as etapas deste guia.
 
 ## 2. Calcular primeiro com medidas DAX
 
 As 53 medidas ativas estão no [catálogo de medidas](../assets/medidas/README.md), com as expressões exportadas do modelo aberto. As pastas incluem Base, Serviço, Qualidade, Derivada, Temporal, Gold e Apresentação.
-
-![Organização das medidas por pasta no modelo](../assets/organizacao-medidas.svg)
 
 Use `DISTINCTCOUNT` para pedidos, `DIVIDE` para taxas e `KEEPFILTERS` em condições que devem cruzar o filtro do relatório. A contagem de elegíveis e a de sucessos ficam separadas.
 

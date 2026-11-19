@@ -39,6 +39,10 @@ A base contém 1.000 pedidos únicos. Cada registro contém um pedido e um SKU, 
 - **Operação.** Separar a carteira ativa do histórico de atrasos. Na fila, começar pelos pedidos atrasados com previsão mais antiga e verificar motivo, destino e transportadora.
 - **Qualidade dos dados.** A base preserva 50 pedidos sem data de entrega. Um registro de devolução tem data posterior à referência da base e recebeu sinalização para investigação.
 
+## Páginas do relatório
+
+A Capa resume o período e o nível de serviço. A Operação organiza a carteira por status e previsão de entrega. [Prévia da Capa](../assets/capa.png) · [Prévia da Operação](../assets/operacao.png)
+
 ## Limites
 
 O relatório é um **estudo de caso com dados simulados**. Concentração de falhas orienta investigação e não comprova causa. A base não define SLA, metas de OTIF, faixas de criticidade, receita contábil ou responsabilidade por ocorrência. A comparação usa grupos de pedidos definidos pela **data do pedido**. Avaliar entregas efetivamente ocorridas num mês exige um recorte temporal próprio.
