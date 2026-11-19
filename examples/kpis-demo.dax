@@ -1,0 +1,30 @@
+// Executar na Exibição de consulta DAX com fPedidos-demo.m carregado como fPedidos.
+// Os nomes de medida definidos aqui existem apenas na consulta.
+DEFINE
+    MEASURE fPedidos[Pedidos demo] = DISTINCTCOUNT(fPedidos[ID_Pedido])
+    MEASURE fPedidos[Elegíveis demo] =
+        CALCULATE(
+            [Pedidos demo],
+            KEEPFILTERS(fPedidos[Entrega_No_Prazo] IN {"Sim", "Não"}),
+            KEEPFILTERS(fPedidos[Pedido_Completo] IN {"Sim", "Não"})
+        )
+    MEASURE fPedidos[OTIF demo] =
+        CALCULATE(
+            [Pedidos demo],
+            KEEPFILTERS(fPedidos[Entrega_No_Prazo] = "Sim"),
+            KEEPFILTERS(fPedidos[Pedido_Completo] = "Sim")
+        )
+EVALUATE
+ROW(
+    "Pedidos", [Pedidos demo],
+    "Elegíveis", [Elegíveis demo],
+    "OTIF", [OTIF demo],
+    "Taxa OTIF", DIVIDE([OTIF demo], [Elegíveis demo]),
+    "Carteira ativa",
+        CALCULATE([Pedidos demo], KEEPFILTERS(fPedidos[Status_Entrega] IN {"Atrasado", "Em trânsito"})),
+    "Custo por pedido", DIVIDE(SUM(fPedidos[Custo_Logistico_Total_R$]), [Pedidos demo]),
+    "Lead time concluído",
+        CALCULATE(AVERAGE(fPedidos[Lead_Time_Total_Dias]), KEEPFILTERS(NOT ISBLANK(fPedidos[Data_Entrega])))
+)
+// Esperado: 8 pedidos, 4 elegíveis, 2 OTIF, taxa 0,5, carteira 3, custo por pedido 42,375,
+// lead time concluído 3,5 dias.

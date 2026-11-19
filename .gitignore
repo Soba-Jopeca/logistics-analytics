@@ -1,0 +1,7 @@
+# Arquivos de trabalho locais e credenciais
+*.pbix
+*.pbit
+*.xlsx
+.env
+.env.*
+config.toml

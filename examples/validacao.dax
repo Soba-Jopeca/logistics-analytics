@@ -1,0 +1,46 @@
+// Consultas somente leitura para o modelo completo Logistics Analytics.
+EVALUATE
+ROW(
+    "Linhas", COUNTROWS(fPedidos),
+    "Pedidos", [Total de pedidos],
+    "Custo total", [Custo logístico],
+    "Custo por pedido", [Custo logístico por pedido],
+    "Elegíveis para OTIF", [Pedidos elegíveis para OTIF],
+    "Pedidos OTIF", [Pedidos OTIF],
+    "OTIF", [OTIF %],
+    "Lead time médio", [Lead time médio]
+)
+
+EVALUATE
+SUMMARIZECOLUMNS(
+    dDestino[Regiao_Destino],
+    "Pedidos", [Total de pedidos],
+    "Elegíveis", [Pedidos elegíveis para OTIF],
+    "Pedidos OTIF", [Pedidos OTIF],
+    "Falhas OTIF", [Pedidos elegíveis para OTIF] - [Pedidos OTIF],
+    "OTIF", [OTIF %]
+)
+ORDER BY [Falhas OTIF] DESC
+
+EVALUATE
+VAR Junho = DATESBETWEEN(dCalendario[Data], DATE(2026, 6, 1), DATE(2026, 6, 10))
+VAR Julho = DATESBETWEEN(dCalendario[Data], DATE(2026, 7, 1), DATE(2026, 7, 10))
+VAR PedidosJunho = CALCULATE([Total de pedidos], Junho)
+VAR PedidosJulho = CALCULATE([Total de pedidos], Julho)
+RETURN
+    ROW(
+        "Pedidos de 1–10/jun", PedidosJunho,
+        "Pedidos de 1–10/jul", PedidosJulho,
+        "Variação de pedidos", DIVIDE(PedidosJulho - PedidosJunho, PedidosJunho),
+        "Junho elegíveis", CALCULATE([Pedidos elegíveis para OTIF], Junho),
+        "Julho elegíveis", CALCULATE([Pedidos elegíveis para OTIF], Julho),
+        "OTIF junho", CALCULATE([OTIF %], Junho),
+        "OTIF julho", CALCULATE([OTIF %], Julho)
+    )
+
+EVALUATE
+CALCULATETABLE(
+    SUMMARIZECOLUMNS(dStatus[Status_Entrega], "Pedidos", [Total de pedidos]),
+    KEEPFILTERS(dStatus[Status_Entrega] IN {"Atrasado", "Em trânsito"})
+)
+ORDER BY dStatus[Status_Entrega]
