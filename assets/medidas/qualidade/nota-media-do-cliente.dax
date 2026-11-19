@@ -1,0 +1,2 @@
+Nota média do cliente =
+CALCULATE(AVERAGE(fPedidos[Nota_Cliente]), KEEPFILTERS(fPedidos[Nota_Cliente] IN {1,2,3,4,5}))

@@ -1,0 +1,2 @@
+Pedidos OTIF =
+COALESCE(CALCULATE([Total de pedidos], KEEPFILTERS(fPedidos[Entrega_No_Prazo] IN {"Sim","Não"}), KEEPFILTERS(fPedidos[Pedido_Completo] IN {"Sim","Não"}), KEEPFILTERS(fPedidos[Entrega_No_Prazo] = "Sim"), KEEPFILTERS(fPedidos[Pedido_Completo] = "Sim")),0)

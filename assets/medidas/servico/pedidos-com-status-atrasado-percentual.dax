@@ -1,0 +1,2 @@
+Pedidos com status Atrasado % =
+DIVIDE([Pedidos com status Atrasado],[Total de pedidos])

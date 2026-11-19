@@ -1,0 +1,2 @@
+Lead time médio variação absoluta =
+IF(NOT ISBLANK([Lead time médio]) && NOT ISBLANK([Lead time médio mês anterior]), [Lead time médio] - [Lead time médio mês anterior])

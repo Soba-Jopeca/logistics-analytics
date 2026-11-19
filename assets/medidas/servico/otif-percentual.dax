@@ -1,0 +1,2 @@
+OTIF % =
+DIVIDE([Pedidos OTIF],[Pedidos elegíveis para OTIF])

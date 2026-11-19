@@ -1,0 +1,870 @@
+HTML Dashboard Logistica =
+VAR Gold = [JSON Gold Dashboard Logistica]
+VAR Payload = SUBSTITUTE(Gold, "<", "\u003c")
+RETURN
+    "<style>.ld-root {
+  --ld-font: ""Inter"", ""Segoe UI"", sans-serif;
+  --ld-bg: #edf2f6; --ld-surface: #fff; --ld-soft: #f5f8fb; --ld-border: #d8e1e9;
+  --ld-text: #142638; --ld-muted: #4c6175; --ld-head: #112c42; --ld-on-head: #f3f9ff; --ld-on-head-muted: #bbd1e2;
+  --ld-accent: #007a6e; --ld-on-accent: #fff; --ld-accent-soft: #e3f4ee;
+  --ld-bar: #568cb5; --ld-cost: #326697; --ld-line: #00776a; --ld-median: #735487; --ld-risk: #a34927;
+  --ld-spark: #14586b; --ld-spark-wash: #14586b24;
+  --ld-growth: #076847; --ld-growth-bg: #e6f5ec; --ld-drop: #a1283d; --ld-drop-bg: #fff0f2;
+  --ld-road-size: 24px; --ld-road-edge: #44687f; --ld-road-bed: #0b2335; --ld-road-stripe: #638093;
+  --ld-road-marker: #6ce7cb; --ld-road-marker-alt: #88c8fa; --ld-road-headlight: #f4ffff;
+  --ld-tooltip-bg: #123047; --ld-tooltip-fg: #fff; --ld-focus: #007a6e;
+  --ld-s1: 4px; --ld-s2: 8px; --ld-s3: 12px; --ld-s4: 16px; --ld-s5: 20px; --ld-s6: 24px; --ld-s7: 32px;
+  --ld-r1: 8px; --ld-r2: 14px; --ld-text-xs: .75rem; --ld-text-sm: .83rem; --ld-text-md: .96rem;
+  --ld-num: clamp(1.08rem, 2vw, 1.77rem); --ld-title: clamp(1.65rem, 3vw, 2.65rem);
+  display: block; position: relative; container: ld-layout / inline-size;
+  background: var(--ld-bg); color: var(--ld-text); font: 400 1rem/1.42 var(--ld-font);
+  box-sizing: border-box; padding: clamp(10px, 2vw, 24px); color-scheme: light; text-align: left;
+}
+.ld-root[data-theme=""dark""] {
+  --ld-bg: #09131e; --ld-surface: #10202e; --ld-soft: #142737; --ld-border: #2c4256;
+  --ld-text: #e7f2fa; --ld-muted: #a5bacb; --ld-head: #102838; --ld-on-head: #f3f9ff; --ld-on-head-muted: #aac7d7;
+  --ld-accent: #66ead0; --ld-on-accent: #0b2630; --ld-accent-soft: #173936;
+  --ld-bar: #6f9fca; --ld-cost: #85b7e1; --ld-line: #66ead0; --ld-median: #c6a7df; --ld-risk: #f5a486;
+  --ld-spark: #75bfd0; --ld-spark-wash: #75bfd026;
+  --ld-growth: #7fe8b4; --ld-growth-bg: #18382e; --ld-drop: #ffabb7; --ld-drop-bg: #40252e;
+  --ld-tooltip-bg: #e7f2fa; --ld-tooltip-fg: #122731; --ld-" &
+    "focus: #66ead0;
+  color-scheme: dark;
+}
+.ld-root *, .ld-root *::before, .ld-root *::after { box-sizing: border-box; }
+.ld-root [hidden] { display: none !important; }
+.ld-root :focus-visible { outline: 2px solid var(--ld-focus); outline-offset: 2px; }
+.ld-root h1, .ld-root h2, .ld-root p { margin: 0; }
+.ld-header {
+  min-width: 0; display: flex; justify-content: space-between; align-items: center; gap: var(--ld-s4); flex-wrap: wrap;
+  background: var(--ld-head); color: var(--ld-on-head); border-radius: var(--ld-r2); padding: var(--ld-s5) var(--ld-s6);
+}
+.ld-header h1 { font-size: var(--ld-title); line-height: 1.08; font-weight: 730; letter-spacing: -.04em; }
+.ld-header .ld-period { color: var(--ld-on-head-muted); margin-top: var(--ld-s2); font-size: var(--ld-text-sm); }
+.ld-header-right { display: grid; justify-items: end; gap: var(--ld-s2); }
+.ld-source { display: grid; text-align: right; color: var(--ld-on-head-muted); font-size: var(--ld-text-xs); overflow-wrap: anywhere; }
+.ld-button { cursor: pointer; font: 600 var(--ld-text-sm) var(--ld-font); padding: var(--ld-s2) var(--ld-s3); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); color: var(--ld-text); background: var(--ld-surface); min-height: 36px; }
+.ld-button:hover { background: var(--ld-soft); }
+.ld-button:disabled { opacity: .62; cursor: default; }
+.ld-theme { color: var(--ld-on-head); border-color: var(--ld-on-head-muted); background: var(--ld-head); }
+.ld-theme:hover { color: var(--ld-on-accent); background: var(--ld-accent); border-color: var(--ld-accent); }
+.ld-controls { margin: var(--ld-s3) 0; padding: var(--ld-s3) var(--ld-s4); background: var(--ld-surface); border: 1px solid var(--ld-border); border-radius: var(--ld-r2); display: flex; flex-wrap: wrap; align-items: end; gap: var(--ld-s3); }
+.ld-fields { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--ld-s3); flex: 1 1 650px; min-width: 0; }
+.ld-field { min-width: 0; display: grid; gap: var(--ld-s1); font-we" &
+    "ight: 620; font-size: var(--ld-text-xs); color: var(--ld-muted); }
+.ld-field select { width: 100%; min-width: 0; font: 500 var(--ld-text-sm) var(--ld-font); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); padding: var(--ld-s2); min-height: 36px; color: var(--ld-text); background: var(--ld-soft); }
+.ld-clear { flex: 0 0 auto; }
+.ld-state { padding: var(--ld-s7) var(--ld-s4); border: 1px solid var(--ld-border); border-radius: var(--ld-r2); background: var(--ld-surface); color: var(--ld-muted); }
+.ld-content { display: grid; gap: var(--ld-s3); min-width: 0; }
+.ld-ticker { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ld-s2) var(--ld-s4); padding: var(--ld-s2) var(--ld-s4); color: var(--ld-muted); background: var(--ld-soft); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); font-size: var(--ld-text-xs); }
+.ld-ticker strong { color: var(--ld-accent); white-space: nowrap; }
+.ld-ticker div { display: flex; flex-wrap: wrap; gap: var(--ld-s2) var(--ld-s4); }
+.ld-ticker span { padding-inline-start: var(--ld-s3); border-inline-start: 1px solid var(--ld-border); }
+.ld-kpis { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.23fr) minmax(0, 1.25fr) repeat(2, minmax(0, 1fr)); gap: var(--ld-s3); }
+.ld-card, .ld-panel { min-width: 0; border: 1px solid var(--ld-border); background: var(--ld-surface); border-radius: var(--ld-r2); }
+.ld-card { display: grid; align-content: start; gap: var(--ld-s1); padding: var(--ld-s3) var(--ld-s4); }
+.ld-card[data-primary] { background: var(--ld-accent-soft); border-top: 3px solid var(--ld-accent); padding-top: calc(var(--ld-s3) - 2px); }
+.ld-kpi-label { font-size: var(--ld-text-xs); font-weight: 650; color: var(--ld-muted); }
+.ld-value { font-size: var(--ld-num); font-variant-numeric: tabular-nums; font-weight: 740; letter-spacing: -.04em; overflow-wrap: anywhere; line-height: 1.2; }
+.ld-kpi-detail { font-size: var(--ld-text-xs); color: var(--ld-muted); }
+.ld-delta { font-size: var(--" &
+    "ld-text-xs); color: var(--ld-muted); margin-top: var(--ld-s1); }
+.ld-delta[data-direction=""lower""] { color: var(--ld-risk); }
+.ld-delta[data-direction=""higher""] { color: var(--ld-accent); }
+.ld-overview { display: grid; grid-template-columns: minmax(0, 2.25fr) minmax(0, 1fr); gap: var(--ld-s3); }
+.ld-breakdown { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--ld-s3); min-width: 0; }
+.ld-panel { padding: var(--ld-s4); }
+.ld-panel-head { display: flex; justify-content: space-between; align-items: start; flex-wrap: wrap; gap: var(--ld-s2); margin-bottom: var(--ld-s3); }
+.ld-panel-head h2 { color: var(--ld-text); font-size: 1.02rem; font-weight: 720; letter-spacing: -.02em; }
+.ld-panel-head p { color: var(--ld-muted); font-size: var(--ld-text-xs); margin-top: var(--ld-s1); }
+.ld-brief { background: var(--ld-soft); }
+.ld-insights { display: grid; gap: var(--ld-s3); }
+.ld-insight { border-inline-start: 2px solid var(--ld-border); padding-inline-start: var(--ld-s3); }
+.ld-insight:first-child { border-color: var(--ld-accent); }
+.ld-insight strong { display: block; font-size: var(--ld-text-sm); margin-bottom: var(--ld-s1); }
+.ld-insight p { font-size: var(--ld-text-xs); color: var(--ld-muted); }
+.ld-chart { min-width: 0; height: 266px; }
+.ld-svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ld-gridline { stroke: var(--ld-border); stroke-width: 1; }
+.ld-axis { fill: var(--ld-muted); font: 11px var(--ld-font); }
+.ld-bar { fill: var(--ld-bar); }
+.ld-otif-line { stroke: var(--ld-line); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ld-otif-dot { fill: var(--ld-line); stroke: var(--ld-surface); stroke-width: 1.5; }
+.ld-hit { fill: transparent; cursor: help; }
+.ld-hit:hover, .ld-hit:focus { fill: var(--ld-line); fill-opacity: .08; stroke: var(--ld-focus); stroke-opacity: .55; outline: none !important; }
+.ld-legend { display: flex; flex-wrap: wrap; gap: var(--ld-s3); font-size: var(--ld-text-xs); col" &
+    "or: var(--ld-muted); }
+.ld-legend span { display: inline-flex; gap: var(--ld-s1); align-items: center; }
+.ld-legend span::before { content: """"; display: inline-block; background: var(--ld-bar); width: var(--ld-s3); height: var(--ld-s2); border-radius: 2px; }
+.ld-legend .ld-key-otif::before { background: var(--ld-line); height: 3px; }
+.ld-ranking { display: grid; gap: var(--ld-s3); }
+.ld-rank-row { display: grid; gap: var(--ld-s1); cursor: help; min-width: 0; }
+.ld-rank-label { display: flex; justify-content: space-between; align-items: start; gap: var(--ld-s2); font-size: var(--ld-text-xs); }
+.ld-rank-label span:first-child { overflow-wrap: anywhere; }
+.ld-rank-label strong { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ld-track { height: 5px; display: block; border-radius: var(--ld-r1); background: var(--ld-border); }
+.ld-fill { height: 100%; display: block; border-radius: inherit; background: var(--ld-line); }
+.ld-fill.ld-cost { background: var(--ld-cost); }
+.ld-fill.ld-risk { background: var(--ld-risk); }
+.ld-rank-sub { color: var(--ld-muted); font-size: var(--ld-text-xs); }
+.ld-table-wrap { overflow-x: auto; max-width: 100%; }
+.ld-table { width: 100%; border-collapse: collapse; font-size: var(--ld-text-xs); font-variant-numeric: tabular-nums; }
+.ld-table th, .ld-table td { text-align: right; white-space: nowrap; padding: var(--ld-s2) var(--ld-s3); border-bottom: 1px solid var(--ld-border); }
+.ld-table th { background: var(--ld-soft); color: var(--ld-muted); }
+.ld-table th:first-child { text-align: left; }
+.ld-table tbody th { background: none; color: var(--ld-text); font-weight: 630; }
+.ld-tooltip { position: absolute; z-index: 4; max-width: min(290px, calc(100% - 24px)); pointer-events: none; padding: var(--ld-s2) var(--ld-s3); border-radius: var(--ld-r1); background: var(--ld-tooltip-bg); color: var(--ld-tooltip-fg); white-space: pre-line; overflow-wrap: anywhere; font-size: var(--ld-text-xs); }
+@container ld-layout (max-width: 920px) {
+  .ld-ov" &
+    "erview { grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); }
+  .ld-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@container ld-layout (max-width: 685px) {
+  .ld-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ld-overview, .ld-breakdown { grid-template-columns: minmax(0, 1fr); }
+  .ld-header { padding: var(--ld-s4); }
+  .ld-header-right { justify-items: start; }
+  .ld-source { text-align: left; }
+}
+@container ld-layout (max-width: 385px) {
+  .ld-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ld-panel { padding: var(--ld-s3); }
+}
+.ld-median-line { stroke: var(--ld-median); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.ld-legend .ld-key-median::before { background: transparent; border-top: 2px dashed var(--ld-median); height: 0; border-radius: 0; }
+.ld-axis-title { font-weight: 680; }
+.ld-mode-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 225px), 1fr)); gap: var(--ld-s3); }
+.ld-mode { display: grid; gap: var(--ld-s2); background: var(--ld-soft); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); padding: var(--ld-s3); cursor: help; }
+.ld-mode .ld-mode-label { font-size: var(--ld-text-sm); }
+.ld-mode dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--ld-s2); margin: 0; font-size: var(--ld-text-xs); }
+.ld-mode dt, .ld-mode p, .ld-rank-empty { color: var(--ld-muted); font-size: var(--ld-text-xs); }
+.ld-mode dd { margin: 0; font-weight: 650; font-variant-numeric: tabular-nums; }
+.ld-classification { padding: var(--ld-s1) var(--ld-s2); background: var(--ld-soft); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); }
+.ld-table th button { background: transparent; border: 0; color: inherit; cursor: pointer; font: inherit; font-weight: 650; padding: 0; }
+.ld-table th button span { margin-inline-start: var(--ld-s1); color: var(--ld-muted); }
+.ld-table th[aria-sort] button, .ld-table th[aria-sort] button span { color: var(--ld-accent); }
+
+" &
+    ".ld-road { position: relative; isolation: isolate; overflow: hidden; block-size: var(--ld-road-size); border-block: 1px solid var(--ld-road-edge); background: var(--ld-road-bed); pointer-events: none; }
+.ld-road::before { content: """"; position: absolute; inset: 50% 0 auto; border-top: 1px dashed var(--ld-road-stripe); }
+.ld-vehicle { position: absolute; left: var(--ld-from); top: var(--ld-lane, 21%); width: 18px; height: 5px; border-radius: 2px; background: var(--ld-vehicle-color, var(--ld-road-marker)); box-shadow: 0 0 9px var(--ld-vehicle-color, var(--ld-road-marker)); animation: ld-drive var(--ld-trip) linear 3; animation-delay: var(--ld-delay, 0s); }
+.ld-vehicle::after { content: """"; position: absolute; top: 1px; right: 2px; width: 3px; height: 3px; background: var(--ld-road-headlight); border-radius: 1px; }
+.ld-vehicle-a { --ld-from: 11%; --ld-to: 97%; --ld-trip: 8s; }
+.ld-vehicle-b { --ld-from: 83%; --ld-to: 3%; --ld-trip: 10s; --ld-lane: 67%; --ld-delay: -.8s; --ld-vehicle-color: var(--ld-road-marker-alt); }
+.ld-vehicle-c { --ld-from: 44%; --ld-to: 98%; --ld-trip: 6s; --ld-delay: -2s; }
+@keyframes ld-drive { to { left: var(--ld-to); } }
+.ld-header .ld-road { flex: 0 0 100%; border-radius: var(--ld-r1); }
+.ld-product-ticker { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--ld-s3); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); padding: var(--ld-s2) var(--ld-s4); color: var(--ld-text); background: var(--ld-surface); font-size: var(--ld-text-xs); }
+.ld-product-ticker > strong { color: var(--ld-accent); }
+.ld-product-window { min-width: 0; overflow: hidden; }
+.ld-product-track { display: flex; width: max-content; min-width: 200%; animation: ld-product-pass 18s linear 2; }
+.ld-product-ticker:hover .ld-product-track, .ld-product-ticker:focus-within .ld-product-track { animation-play-state: paused; }
+.ld-product-list { display: flex; flex: 1 0 50%; justify-content: space-around; gap: var(--ld-s3); list-sty" &
+    "le: none; margin: 0; padding: 0 var(--ld-s3); }
+.ld-product-list li { display: inline-flex; align-items: baseline; gap: var(--ld-s2); }
+.ld-product-position { color: var(--ld-accent); font-weight: 740; }
+.ld-product-qty { font-weight: 650; white-space: nowrap; }
+.ld-card { transition: transform 180ms ease, border-color 180ms ease; }
+.ld-card:hover { transform: translateY(-2px); border-color: var(--ld-accent); }
+.ld-card.ld-enter { animation: ld-card-in 480ms ease-out both; }
+.ld-delta { width: fit-content; padding: var(--ld-s1) var(--ld-s2); border-radius: var(--ld-r1); }
+.ld-delta[data-meaning=""better""] { color: var(--ld-growth); background: var(--ld-growth-bg); }
+.ld-delta[data-meaning=""worse""] { color: var(--ld-drop); background: var(--ld-drop-bg); animation: ld-delta-pulse 850ms ease-in-out 2; }
+.ld-svg.ld-enter .ld-bar { transform-box: fill-box; transform-origin: center bottom; animation: ld-bar-in 590ms ease-out both; }
+.ld-svg.ld-enter .ld-otif-line { stroke-dasharray: 100; animation: ld-line-in 690ms ease-out both; }
+.ld-svg.ld-enter .ld-otif-dot, .ld-svg.ld-enter .ld-median-line { animation: ld-fade-in 660ms ease-out both; }
+.ld-bar.ld-highlight { filter: brightness(1.2); }
+@keyframes ld-product-pass { to { transform: translateX(-50%); } }
+@keyframes ld-card-in { from { opacity: .65; transform: translateY(4px); } }
+@keyframes ld-delta-pulse { 50% { opacity: .76; } }
+@keyframes ld-bar-in { from { transform: scaleY(0); } }
+@keyframes ld-line-in { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
+@keyframes ld-fade-in { from { opacity: 0; } }
+@container ld-layout (max-width: 685px) {
+  .ld-product-ticker { grid-template-columns: minmax(0, 1fr); gap: var(--ld-s1); }
+  .ld-product-track { width: auto; min-width: 0; animation: none; }
+  .ld-product-list { flex: 1; flex-direction: column; gap: var(--ld-s1); padding: 0; }
+  .ld-product-list[aria-hidden] { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ld-root *, .ld-root *::before, .l" &
+    "d-root *::after { animation: none !important; transition: none !important; }
+  .ld-root .ld-card:hover { transform: none; }
+}
+
+.ld-card { padding-bottom: calc(var(--ld-s3) - 5px); }
+.ld-spark { position: relative; width: 80%; height: 26px; }
+.ld-spark svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.ld-spark-line { stroke: var(--ld-spark); stroke-width: 1.65; stroke-linecap: round; fill: none; vector-effect: non-scaling-stroke; }
+.ld-spark-stop { stop-color: var(--ld-spark-wash); }
+.ld-spark-dot { position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--ld-spark); transform: translate(-50%, -50%); }
+
+.ld-filter-box { margin: var(--ld-s3) 0; }
+.ld-filter-box > summary { display: none; }
+.ld-filter-box .ld-controls { margin: 0; }
+.ld-priority { background: var(--ld-accent-soft); border-inline-start: 3px solid var(--ld-accent); padding: var(--ld-s2) var(--ld-s3); border-radius: var(--ld-r1); color: var(--ld-text); font-size: var(--ld-text-sm); }
+.ld-priority strong { font-weight: 730; }
+.ld-period-note { color: var(--ld-muted); font-size: var(--ld-text-xs); }
+.ld-product-ticker { grid-template-columns: minmax(0, 1fr); margin-top: var(--ld-s4); gap: var(--ld-s1); }
+.ld-bar.ld-partial { fill-opacity: .52; }
+.ld-spark-dot.ld-partial { background: var(--ld-surface); border: 1px solid var(--ld-spark); }
+@container ld-layout (max-width: 685px) {
+  .ld-filter-box { background: var(--ld-surface); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); }
+  .ld-filter-box > summary { display: list-item; padding: var(--ld-s2) var(--ld-s3); cursor: pointer; font-size: var(--ld-text-sm); font-weight: 650; }
+  .ld-filter-box > summary span { color: var(--ld-muted); font-weight: 500; }
+  .ld-filter-box .ld-controls { border: 0; }
+}
+
+.ld-delta { display: inline-flex; gap: var(--ld-s1); align-items: baseline; width: fit-content; max-width: 100%; padding: 2px 6px; border: 1px solid var(--ld-border); border-radius: 999px; backgroun" &
+    "d: var(--ld-soft); line-height: 1.15; font-size: .71rem; }
+.ld-delta[data-meaning=""better""] { border-color: color-mix(in srgb, var(--ld-growth) 27%, var(--ld-border)); }
+.ld-delta[data-meaning=""worse""] { border-color: color-mix(in srgb, var(--ld-drop) 25%, var(--ld-border)); }
+.ld-delta strong, .ld-delta span { white-space: nowrap; }
+.ld-table-more { min-height: 30px; font-size: var(--ld-text-xs); }
+.ld-table-rank { display: inline-block; min-width: 2.15em; padding: 2px 5px; margin-inline-end: var(--ld-s2); border-radius: 999px; background: var(--ld-accent-soft); color: var(--ld-accent); text-align: center; font-size: .72rem; font-weight: 700; }
+.ld-table-rate { display: inline-flex; align-items: center; gap: var(--ld-s1); border-radius: 999px; background: var(--ld-soft); padding: 2px 7px; font-weight: 650; }
+.ld-table-rate[data-reference=""above""] { background: var(--ld-growth-bg); color: var(--ld-growth); }
+.ld-table-rate[data-reference=""below""] { background: var(--ld-drop-bg); color: var(--ld-drop); }
+.ld-table tbody tr:nth-child(even) { background: var(--ld-soft); }
+.ld-table tbody tr:hover { background: var(--ld-accent-soft); }
+.ld-table thead th { font-size: .73rem; }
+@container ld-layout (max-width: 385px) {
+  .ld-delta { flex-wrap: wrap; column-gap: 3px; }
+}
+
+.ld-filter-groups { display: grid; gap: var(--ld-s2); flex: 1 1 420px; min-width: 0; }
+.ld-fields.ld-fields-primary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ld-fields.ld-fields-secondary { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: var(--ld-s2); }
+.ld-extra-filters > summary, .ld-carrier-detail > summary { cursor: pointer; color: var(--ld-accent); font-weight: 650; font-size: var(--ld-text-sm); }
+.ld-strategy-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.ld-strategy-legend { min-height: 1em; }
+.ld-detail-inner { margin-top: var(--ld-s3); }
+.ld-chart .ld-axis-partial { font-weight: 700; }
+@container ld-layout (max-width: 685px) {
+  .ld-fields.ld-fields-second" &
+    "ary { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .ld-strategy-kpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
+}
+
+</style><div class=""ld-root"" data-theme=""light"" lang=""pt-BR"">
+  <header class=""ld-header"" data-hc-suppress=""all"">
+    <div>
+      <h1>Estratégia logística</h1>
+      <p class=""ld-period"" data-period></p>
+    </div>
+    <div class=""ld-header-right"">
+      <button type=""button"" class=""ld-button ld-theme"" data-theme-switch aria-label=""Alternar modo escuro"" aria-pressed=""false"">Modo escuro</button>
+      <div class=""ld-source""><span data-source></span><span data-reference></span><time data-rendered></time></div>
+    </div>
+    <div class=""ld-road"" aria-hidden=""true""><span class=""ld-vehicle ld-vehicle-a""></span><span class=""ld-vehicle ld-vehicle-b""></span><span class=""ld-vehicle ld-vehicle-c""></span></div>
+  </header>
+  <details class=""ld-filter-box"" data-filter-box open>
+    <summary>Filtros internos <span data-filter-summary></span></summary>
+    <section class=""ld-controls"" data-hc-suppress=""all"" aria-label=""Filtros internos"">
+    <div class=""ld-filter-groups"">
+      <div class=""ld-fields ld-fields-primary"" data-fields></div>
+      <details class=""ld-extra-filters""><summary>Mais filtros</summary><div class=""ld-fields ld-fields-secondary"" data-extra-fields></div></details>
+    </div>
+    <button type=""button"" class=""ld-button ld-clear"" data-clear disabled>Limpar filtros</button>
+    </section>
+  </details>
+  <p class=""ld-state"" role=""status"" data-state>Carregando painel interativo…</p>
+  <main class=""ld-content"" data-content hidden>
+    <aside class=""ld-priority"" aria-label=""Resumo executivo"" data-priority></aside>
+    <p class=""ld-period-note"" data-period-note></p>
+    <section class=""ld-kpis ld-strategy-kpis"" aria-label=""Indicadores principais"" data-kpis></section>
+    <div class=""ld-overview"">
+      <section class=""ld-panel"">
+        <div class=""ld-panel-head"">
+          <div><h2>Tendência mensal</h2><p data-chart-caption></p></div>
+  " &
+    "        <label class=""ld-field""><span>Indicador</span><select data-chart-mode><option value=""otif"">OTIF</option><option value=""unitCost"">Custo por pedido</option></select></label>
+        </div>
+        <div class=""ld-legend ld-strategy-legend""><span class=""ld-key-median"" data-median hidden></span></div>
+        <div class=""ld-chart"" data-chart></div>
+      </section>
+      <section class=""ld-panel ld-brief"">
+        <div class=""ld-panel-head""><div><h2>Onde concentrar a melhoria</h2><p>Impacto em volume e intensidade das falhas</p></div></div>
+        <div class=""ld-insights"" data-insights></div>
+      </section>
+    </div>
+    <details class=""ld-panel ld-carrier-detail"">
+      <summary>Detalhe de transportadoras</summary>
+    <section class=""ld-detail-inner"">
+      <div class=""ld-panel-head"">
+        <div><h2>Como as transportadoras se comparam</h2><p>Selecione uma coluna para ordenar. As setas de OTIF indicam a posição em relação ao OTIF do recorte.</p></div>
+        <button type=""button"" class=""ld-button ld-table-more"" data-table-more aria-expanded=""false"">Mais colunas</button>
+      </div>
+      <div class=""ld-table-wrap"" tabindex=""0"" aria-label=""Tabela comparativa com rolagem em telas estreitas"">
+        <table class=""ld-table"">
+          <thead><tr><th scope=""col""><button type=""button"" data-sort=""label"">Transportadora<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""p"">Pedidos<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""otif"">OTIF<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""lead"">Prazo médio<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""unitCost"">Custo por pedido<span aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-extra hidden><button type=""button"" data-sort=""pe"">Elegíveis<span aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-e" &
+    "xtra hidden><button type=""button"" data-sort=""misses"">Falhas de OTIF<span aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-extra hidden><button type=""button"" data-sort=""cp"">Custo total<span aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-extra hidden><button type=""button"" data-sort=""co"">CO₂<span aria-hidden=""true"">↕</span></button></th></tr></thead>
+          <tbody data-table></tbody>
+        </table>
+      </div>
+    </section>
+    </details>
+  </main>
+  <div class=""ld-tooltip"" role=""tooltip"" data-tooltip hidden></div>
+  <script type=""application/json"" class=""ld-data"">" & Payload &
+    "</script>
+  <script>(() => {
+  'use strict';
+  const root = document.currentScript?.closest('.ld-root') ||
+    [...document.querySelectorAll('.ld-root:not([data-ld-ready])')].at(-1);
+  if (!root || root.hasAttribute('data-ld-ready')) return;
+  root.setAttribute('data-ld-ready', '');
+  const find = name => root.querySelector('[data-' + name + ']');
+  const stateText = find('state');
+  const content = find('content');
+
+  try {
+
+  function compareCalendar(meta, month, priorMonth) {
+    const daysInMonth = key => {
+      const [year, number] = key.split('-').map(Number);
+      return new Date(Date.UTC(year, number, 0)).getUTCDate();
+    };
+    const currentDays = meta.calendarioComparavel?.find(x => x.m === month)?.dias || [];
+    if (!currentDays.length || currentDays.length === daysInMonth(month)) {
+      return { partial: false, days: null };
+    }
+    const days = currentDays.filter(day => day <= daysInMonth(priorMonth));
+    return { partial: true, days: new Set(days), label: days.length ?
+      days.at(-1) - days[0] + 1 === days.length ?
+        'dias ' + days[0] + '–' + days.at(-1) : days.length + ' dias equivalentes' : null };
+  }
+  function monthIsPartial(meta, month) {
+    const next = new Date(month + '-01T00:00:00Z');
+    next.setUTCMonth(next.getUTCMonth() + 1);
+    next.setUTCDate(0);
+    const row = meta.calendarioComparavel?.find(x => x.m === month);
+    return Boolean(row?.dias.length && row.dias.length < next.getUTCDate());
+  }
+    const data = JSON.parse(root.querySelector('.ld-data').textContent);
+    if (!Array.isArray(data.baseInterativa) || !data.meta || !data.kpis) throw new Error('Estrutura de dados incompleta');
+    const base = data.baseInterativa;
+    const comparison = data.baseComparacao || [];
+    const fields = [['m', 'Mês'], ['r', 'Região'], ['c', 'Categoria'], ['t', 'Transportadora'], ['o', 'Modal']]
+      .filter(([key]) => !base.length || base.some(row => key in row));
+    const memory = globalThis[Symbol.for('logistics.analytics.dash" &
+    "board')] ??= { theme: 'light', filters: {} };
+    const selected = memory.filters;
+    const selects = new Map();
+    const number = new Intl.NumberFormat('pt-BR');
+    const decimal = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 });
+    const percent = new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
+    const currency = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+    const monthShort = new Intl.DateTimeFormat('pt-BR', { month: 'short', timeZone: 'UTC' });
+    const monthLong = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+    const clock = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Sao_Paulo' });
+    const collator = new Intl.Collator('pt-BR');
+    const fmt = (value, formatter = number, unit = '') => value == null ? '—' : formatter.format(value) + unit;
+    const ratio = (numerator, denominator) => denominator ? numerator / denominator : null;
+    const monthDate = key => new Date(key + '-01T00:00:00Z');
+    const monthLabel = key => key ? monthLong.format(monthDate(key)) : '—';
+    const compactMonth = key => monthShort.format(monthDate(key)).replace('.', '') + '/' + key.slice(2, 4);
+    const previousMonth = key => {
+      const date = monthDate(key);
+      date.setUTCMonth(date.getUTCMonth() - 1);
+      return date.toISOString().slice(0, 7);
+    };
+    const add = (tag, className, text) => {
+      const el = document.createElement(tag);
+      if (className) el.className = className;
+      if (text != null) el.textContent = text;
+      return el;
+    };
+    const tally = rows => {
+      const sum = key => rows.reduce((total, row) => total + (row[key] ?? 0), 0);
+      const p = sum('p'), q = sum('q'), pe = sum('pe'), ln = sum('ln'), cp = sum('cp');
+      return {
+        p, q, pe, cp, ln, qt: sum('qt'), delay: ratio(sum('at'), sum('an')), co: sum('co'), pa: sum('pa'), en: sum" &
+    "('en'), ea: sum('ea'),
+        dv: sum('dv'), av: sum('av'), ex: sum('ex'), misses: pe - q,
+        otif: ratio(q, pe), lead: ratio(sum('lt'), ln), unitCost: ratio(cp, p)
+      };
+    };
+    const group = (rows, key) => {
+      const buckets = new Map();
+      for (const row of rows) {
+        if (row[key] == null) continue;
+        if (!buckets.has(row[key])) buckets.set(row[key], []);
+        buckets.get(row[key]).push(row);
+      }
+      return [...buckets].map(([label, items]) => ({ label, ...tally(items) }));
+    };
+    const descending = (items, key) =>
+      [...items].sort((a, b) => (b[key] ?? -Infinity) - (a[key] ?? -Infinity) || collator.compare(a.label, b.label));
+    const ascendingOtif = items => [...items].sort((a, b) =>
+      (a.otif ?? Infinity) - (b.otif ?? Infinity) || b.pe - a.pe || collator.compare(a.label, b.label));
+    const median = values => {
+      const sorted = values.filter(value => value != null).sort((a, b) => a - b);
+      if (!sorted.length) return null;
+      const middle = Math.floor(sorted.length / 2);
+      return sorted.length % 2 ? sorted[middle] : (sorted[middle - 1] + sorted[middle]) / 2;
+    };
+    const tooltip = find('tooltip');
+    const closeTooltip = () => { tooltip.hidden = true; };
+    const showTooltip = (target, text) => {
+      const anchor = target.getBoundingClientRect();
+      const area = root.getBoundingClientRect();
+      tooltip.textContent = text;
+      const onPlot = target.classList.contains('ld-hit');
+      const plot = onPlot ? chart.getBoundingClientRect() : null;
+      const left = plot ? plot.left - area.left + 59 : 8;
+      const right = plot ? plot.right - area.left - 20 : area.width - 8;
+      tooltip.style.maxWidth = 'min(290px, ' + Math.max(1, right - left) + 'px)';
+      tooltip.hidden = false;
+      const x = anchor.left - area.left + (anchor.width - tooltip.offsetWidth) / 2;
+      tooltip.style.left = Math.max(left, Math.min(right - tooltip.offsetWidth, x)) + 'px';
+      const above = anchor." &
+    "top - area.top - tooltip.offsetHeight - 6;
+      const below = anchor.bottom - area.top + 6;
+      tooltip.style.top = (plot ? plot.top - area.top + 31 :
+        Math.max(4, Math.min(area.height - tooltip.offsetHeight - 4, above < 4 ? below : above))) + 'px';
+    };
+    const describe = row => row.label + '\n' +
+      fmt(row.p) + ' pedidos · ' + fmt(row.pe) + ' elegíveis\n' +
+      'OTIF ' + fmt(row.otif, percent) + ' · ' + fmt(row.misses) + ' falhas\n' +
+      'Custo ' + fmt(row.cp, currency) + '\n' +
+      'Lead time ' + fmt(row.lead, decimal, ' dias') + ' · CO₂ ' + fmt(row.co, decimal, ' kg');
+    const bindDetails = (target, text) => {
+      target.setAttribute('tabindex', '0');
+      target.setAttribute('aria-label', text.replaceAll('\n', '. '));
+      target.addEventListener('mouseenter', () => showTooltip(target, text));
+      target.addEventListener('mouseleave', closeTooltip);
+      target.addEventListener('focus', () => showTooltip(target, text));
+      target.addEventListener('blur', closeTooltip);
+      target.addEventListener('click', () => showTooltip(target, text));
+    };
+
+    const source = data.meta.fonte?.split(' / ').at(-1);
+    const brDate = value => value.split('-').reverse().join('/');
+    find('source').textContent = source ? (data.meta.baseSimulada ? 'Base simulada · ' : 'Fonte · ') + source : 'Fonte indisponível';
+    find('reference').textContent = data.meta.fonteAtualizadaEm ? 'Referência da base · ' + brDate(data.meta.fonteAtualizadaEm) : 'Referência da base indisponível';
+    const now = new Date();
+    find('rendered').dateTime = now.toISOString();
+    find('rendered').textContent = 'Gerado em ' + clock.format(now) + ' (Brasília)';
+
+    const filterBox = find('filter-box');
+    let compact;
+    const fitFilters = () => {
+      const next = root.clientWidth - parseFloat(getComputedStyle(root).paddingLeft) - parseFloat(getComputedStyle(root).paddingRight) <= 685;
+      if (next !== compact) {
+        filterBox.open = !next;
+        com" &
+    "pact = next;
+      }
+    };
+    fitFilters();
+    const themeButton = find('theme-switch');
+    const applyTheme = () => {
+      const dark = memory.theme === 'dark';
+      root.dataset.theme = dark ? 'dark' : 'light';
+      themeButton.setAttribute('aria-pressed', String(dark));
+      themeButton.textContent = dark ? 'Modo escuro · ligado' : 'Modo escuro';
+    };
+    themeButton.addEventListener('click', () => {
+      memory.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      applyTheme();
+    });
+    applyTheme();
+
+    for (const [key, label] of fields) {
+      const wrapper = add('label', 'ld-field', label);
+      const select = add('select');
+      select.dataset.filter = key;
+      const values = [...new Set(base.map(row => row[key]).filter(value => value != null))].sort(collator.compare);
+      select.append(new Option('Todos', ''));
+      for (const value of values) select.append(new Option(key === 'm' ? monthLabel(value) : value, value));
+      if (selected[key] && !values.includes(selected[key])) {
+        const label = key === 'm' ? monthLabel(selected[key]) : selected[key];
+        select.append(new Option(label + ' · fora do recorte', selected[key]));
+      }
+      select.value = selected[key] || '';
+      select.disabled = !base.length && !selected[key];
+      select.addEventListener('change', () => {
+        selected[key] = select.value;
+        render();
+      });
+      selects.set(key, select);
+      wrapper.append(select);
+      find(key === 'm' || key === 'r' ? 'fields' : 'extra-fields').append(wrapper);
+    }
+    find('clear').addEventListener('click', () => {
+      for (const [key, select] of selects) {
+        delete selected[key];
+        select.value = '';
+        select.disabled = !base.length;
+      }
+      render();
+    });
+    root.addEventListener('keydown', e => { if (e.key === 'Escape') closeTooltip(); });
+
+    const chart = find('chart');
+    let chartData = [], chartMedian = null, contextOtif = null, chartWidth = 0;
+    co" &
+    "nst chartMode = find('chart-mode');
+    chartMode.value = memory.strategyChart || 'otif';
+    chartMode.addEventListener('change', () => {
+      memory.strategyChart = chartMode.value;
+      closeTooltip();
+      renderChart(true);
+    });
+    function monthDetails(row) {
+      const lines = describe({ ...row, label: monthLabel(row.label) + (monthIsPartial(data.meta, row.label) ? ' · período parcial' : '') });
+      if (row.otif == null || contextOtif == null) return lines;
+      const delta = row.otif - contextOtif;
+      const relation = Math.abs(delta) < 1e-10 ? 'em linha com' : delta > 0 ? 'acima de' : 'abaixo de';
+      return lines + '\nOTIF ' + relation + ' ' + fmt(contextOtif, percent) + ' no recorte';
+    }
+    const svgNode = (tag, attrs = {}, label) => {
+      const node = document.createElementNS('http://www.w3.org/2000/svg', tag);
+      for (const [key, value] of Object.entries(attrs)) node.setAttribute(key, value);
+      if (label != null) node.textContent = label;
+      return node;
+    };
+    function renderChart(animate = false) {
+      if (!chartData.length || content.hidden) {
+        chart.replaceChildren();
+        return;
+      }
+      const width = Math.max(1, Math.floor(chart.clientWidth));
+      chartWidth = width;
+      const cost = chartMode.value === 'unitCost';
+      const metric = cost ? 'unitCost' : 'otif';
+      const format = cost ? currency : percent;
+      find('chart-caption').textContent = cost ? 'Custo logístico médio por pedido, em reais' :
+        'Pedidos no prazo e completos entre os elegíveis';
+      const history = find('median');
+      history.hidden = cost || chartMedian == null;
+      history.textContent = history.hidden ? '' : 'Mediana mensal do recorte ' + fmt(chartMedian, percent);
+      const height = 266, left = 55, right = 16, top = 21, bottom = 34;
+      const plotWidth = Math.max(1, width - left - right), plotHeight = height - top - bottom, yBottom = height - bottom;
+      const maximum = cost ? Math.max(20, Mat" &
+    "h.ceil(Math.max(...chartData.map(row => row.unitCost ?? 0)) / 20) * 20) : 1;
+      const step = plotWidth / chartData.length;
+      const svg = svgNode('svg', { class: 'ld-svg' + (animate ? ' ld-enter' : ''),
+        viewBox: '0 0 ' + width + ' ' + height, role: 'group',
+        'aria-label': cost ? 'Custo por pedido por mês. Use Tab para consultar.' : 'OTIF por mês. Use Tab para consultar.' });
+      for (let index = 0; index <= 4; index++) {
+        const y = yBottom - plotHeight * index / 4;
+        svg.append(svgNode('line', { x1: left, x2: width - right, y1: y, y2: y, class: 'ld-gridline' }),
+          svgNode('text', { x: left - 5, y: y + 4, class: 'ld-axis', 'text-anchor': 'end' },
+            cost ? 'R$ ' + number.format(maximum * index / 4) : index * 25 + '%'));
+      }
+      if (!cost && chartMedian != null) {
+        const y = yBottom - plotHeight * chartMedian;
+        svg.append(svgNode('line', { x1: left, x2: width - right, y1: y, y2: y,
+          class: 'ld-median-line', 'data-median-value': chartMedian }));
+      }
+      const path = [], dots = [], hits = [], every = Math.ceil(54 / step);
+      let connected = false;
+      chartData.forEach((row, index) => {
+        const x = left + step * (index + .5), partial = monthIsPartial(data.meta, row.label);
+        if (index % every === 0 || index === chartData.length - 1 && index % every > every / 2) {
+          svg.append(svgNode('text', { x, y: yBottom + 21, class: 'ld-axis' + (partial ? ' ld-axis-partial' : ''), 'text-anchor': 'middle' },
+            compactMonth(row.label) + (partial ? '*' : '')));
+        }
+        if (row[metric] != null) {
+          const y = yBottom - plotHeight * row[metric] / maximum;
+          path.push((connected ? 'L' : 'M') + x + ' ' + y);
+          dots.push(svgNode('circle', { cx: x, cy: y, r: 4, class: 'ld-otif-dot' }));
+          connected = true;
+        } else connected = false;
+        const hit = svgNode('rect', { x: left + step * index, y: top, width: step, height: p" &
+    "lotHeight, class: 'ld-hit' });
+        bindDetails(hit, monthLabel(row.label) + (partial ? ' · mês parcial' : '') + '\n' +
+          (cost ? 'Custo por pedido ' + fmt(row.unitCost, format) : 'OTIF ' + fmt(row.otif, format) +
+            ' · ' + fmt(row.q) + ' de ' + fmt(row.pe) + ' elegíveis') + '\n' + fmt(row.p) + ' pedidos');
+        hits.push(hit);
+      });
+      svg.append(svgNode('path', { d: path.join(' '), class: 'ld-otif-line', pathLength: 100 }), ...dots, ...hits);
+      chart.replaceChildren(svg);
+    }
+    if (typeof ResizeObserver === 'function') {
+      const observer = new ResizeObserver(() => {
+        if (!root.isConnected) return observer.disconnect();
+        fitFilters();
+        if (chart.clientWidth !== chartWidth) {
+          closeTooltip();
+          renderChart();
+        }
+      });
+      observer.observe(chart);
+      observer.observe(root);
+    }
+
+    const sparklineSequence = memory.sparklineSequence = (memory.sparklineSequence || 0) + 1;
+    function renderSparkline(months, metric, label, formatter, unit) {
+      const frame = add('div', 'ld-spark');
+      const observed = months.map((row, index) => ({ index, value: row[metric] }))
+        .filter(point => Number.isFinite(point.value));
+      if (!observed.length) {
+        frame.setAttribute('aria-hidden', 'true');
+        return frame;
+      }
+      const min = Math.min(...observed.map(point => point.value));
+      const max = Math.max(...observed.map(point => point.value));
+      const points = observed.map(point => ({
+        index: point.index,
+        x: months.length === 1 ? 80 : 4 + 152 * point.index / (months.length - 1),
+        y: max === min ? 13 : 21 - 16 * (point.value - min) / (max - min)
+      }));
+      const runs = [];
+      for (const point of points) {
+        const current = runs.at(-1);
+        if (current && point.index === current.at(-1).index + 1) current.push(point);
+        else runs.push([point]);
+      }
+      const paths = runs.filter(run => run.length > 1)" &
+    ".map(run => {
+        let path = 'M ' + run[0].x + ' ' + run[0].y;
+        for (let i = 1; i < run.length; i++) {
+          const a = run[i-1], b = run[i];
+          const bend = (b.x - a.x) * .40;
+          path += ' C ' + (a.x + bend) + ' ' + a.y + ' ' + (b.x - bend) + ' ' + b.y + ' ' + b.x + ' ' + b.y;
+        }
+        return { line: path, area: path + ' L ' + run.at(-1).x + ' 26 L ' + run[0].x + ' 26 Z' };
+      });
+      const svg = svgNode('svg', { viewBox: '0 0 160 26', preserveAspectRatio: 'none', 'aria-hidden': 'true' });
+      const id = 'ld-spark-' + sparklineSequence + '-' + metric;
+      if (paths.length) {
+        const gradient = svgNode('linearGradient', { id, x1: '0%', x2: '0%', y1: '0%', y2: '100%' });
+        gradient.append(svgNode('stop', { offset: '0%', class: 'ld-spark-stop' }),
+          svgNode('stop', { offset: '100%', class: 'ld-spark-stop', 'stop-opacity': '0' }));
+        const defs = svgNode('defs');
+        defs.append(gradient);
+        svg.append(defs);
+        for (const path of paths) svg.append(svgNode('path', { d: path.area, fill: 'url(#' + id + ')' }));
+        for (const path of paths) svg.append(svgNode('path', { d: path.line, class: 'ld-spark-line' }));
+      }
+      const last = points.at(-1);
+      const latestPartial = monthIsPartial(data.meta, months[last.index].label);
+      const dot = add('span', 'ld-spark-dot' + (latestPartial ? ' ld-partial' : ''));
+      dot.style.left = 100 * last.x / 160 + '%';
+      dot.style.top = 100 * last.y / 26 + '%';
+      dot.setAttribute('aria-hidden', 'true');
+      const period = months.length === 1 ? monthLabel(months[0].label) :
+        monthLabel(months[0].label) + ' a ' + monthLabel(months.at(-1).label);
+      frame.setAttribute('role', 'img');
+      frame.setAttribute('aria-label', label + ', tendência de ' + period + '. Último valor: ' +
+        fmt(observed.at(-1).value, formatter, unit) + (latestPartial ? ' (período parcial).' : '.'));
+      frame.append(svg, dot);
+      return" &
+    " frame;
+    }
+
+    function renderCards(total, latest, previous, reference, previousKey, months, windowMatch) {
+      const specs = [
+        ['p', 'Pedidos', number, '', fmt(total.en) + ' com entrega registrada'],
+        ['otif', 'OTIF', percent, '', fmt(total.q) + ' de ' + fmt(total.pe) + ' elegíveis'],
+        ['unitCost', 'Custo por pedido', currency, '', fmt(total.cp, currency) + ' de custo total'],
+        ['lead', 'Lead time médio', decimal, ' dias', fmt(total.ln) + ' entregas com lead time']
+      ];
+      const sparkMonths = months.slice(-12);
+      find('kpis').replaceChildren(...specs.map(([key, label, format, unit, detail]) => {
+        const card = add('article', 'ld-card ld-enter');
+        card.dataset.metric = key;
+        if (key === 'otif') card.dataset.primary = '';
+        const value = add('strong', 'ld-value', fmt(total[key], format, unit));
+        value.dataset.value = total[key] ?? '';
+        const delta = add('p', 'ld-delta');
+        if (latest?.[key] != null && previous?.[key] != null) {
+          const difference = latest[key] - previous[key];
+          const sign = difference > 0 ? '+' : '';
+          const percentage = ratio(difference, previous[key]);
+          const relative = percentage == null ? '' : sign + percent.format(percentage);
+          const points = key === 'otif' ? sign + decimal.format(difference * 100) + ' p.p.' : '';
+          const change = key === 'otif' ? points : relative;
+          const compareLabel = 'vs. mês anterior';
+          const comparisonPeriod = compactMonth(reference) + ' vs. ' + compactMonth(previousKey) +
+            (windowMatch.partial && windowMatch.label ? ' · ' + windowMatch.label : '');
+          const improved = key === 'otif' ? difference > 0 : key === 'lead' ? difference < 0 : null;
+          if (Math.abs(difference) > 1e-10 && improved !== null) delta.dataset.meaning = improved ? 'better' : 'worse';
+          if (change) {
+            const arrow = add('span', '', difference > 1e-10 ? '▲" &
+    "' : difference < -1e-10 ? '▼' : '•');
+            arrow.setAttribute('aria-hidden', 'true');
+            delta.append(arrow, add('strong', '', change), add('span', '', compareLabel));
+            bindDetails(delta, label + ' · ' + comparisonPeriod + '\n' + change +
+              (key === 'otif' ? ' · ' + fmt(latest.pe) + ' vs ' + fmt(previous.pe) + ' elegíveis' : '') +
+              '\n' + fmt(latest[key], format, unit) + ' vs ' + fmt(previous[key], format, unit));
+          } else delta.textContent = 'Sem variação percentual';
+        } else delta.textContent = 'Sem mês anterior';
+        card.append(add('span', 'ld-kpi-label', label), value, add('p', 'ld-kpi-detail', detail),
+          renderSparkline(sparkMonths, key, label, format, unit), delta);
+        return card;
+      }));
+    }
+
+    const sort = memory.sort ??= { key: 'label', direction: 'ascending' };
+    const sortButtons = [...root.querySelectorAll('[data-sort]')];
+    const extraKeys = new Set(['pe', 'misses', 'cp', 'co']);
+    const tableMore = find('table-more');
+    let tableRows = [];
+    tableMore.addEventListener('click', () => {
+      memory.tableDetails = !memory.tableDetails;
+      renderTable();
+    });
+    for (const button of sortButtons) {
+      button.addEventListener('click', () => {
+        const key = button.dataset.sort;
+        sort.direction = sort.key === key ?
+          (sort.direction === 'ascending' ? 'descending' : 'ascending') :
+          (key === 'label' ? 'ascending' : 'descending');
+        sort.key = key;
+        renderTable();
+      });
+    }
+    function renderTable() {
+      const expanded = Boolean(memory.tableDetails);
+      if (!expanded && extraKeys.has(sort.key)) {
+        sort.key = 'label';
+        sort.direction = 'ascending';
+      }
+      tableMore.setAttribute('aria-expanded', String(expanded));
+      tableMore.textContent = expanded ? 'Menos colunas' : 'Mais colunas';
+      for (const button of sortButtons) {
+        const heading = button.closest('th');
+   " &
+    "     heading.hidden = !expanded && extraKeys.has(button.dataset.sort);
+        const isActive = button.dataset.sort === sort.key;
+        if (isActive) heading.setAttribute('aria-sort', sort.direction);
+        else heading.removeAttribute('aria-sort');
+        button.querySelector('span').textContent = isActive ? (sort.direction === 'ascending' ? '↑' : '↓') : '↕';
+      }
+      const direction = sort.direction === 'ascending' ? 1 : -1;
+      const sorted = [...tableRows].sort((a, b) => {
+        const x = a[sort.key], y = b[sort.key];
+        if (x == null || y == null) return Number(x == null) - Number(y == null) || collator.compare(a.label, b.label);
+        const order = sort.key === 'label' ? collator.compare(x, y) : x - y;
+        return direction * order || collator.compare(a.label, b.label);
+      });
+      find('table').replaceChildren(...sorted.map((row, index) => {
+        const el = add('tr'), heading = add('th');
+        heading.scope = 'row';
+        const rank = add('span', 'ld-table-rank', '#' + (index + 1));
+        rank.setAttribute('aria-label', 'Posição ' + (index + 1));
+        heading.append(rank, add('span', 'ld-carrier-name', row.label));
+        el.dataset.sortValue = row[sort.key] ?? '';
+        el.append(heading, add('td', '', fmt(row.p)));
+        const rate = add('span', 'ld-table-rate');
+        if (row.otif == null) rate.textContent = '—';
+        else {
+          const difference = contextOtif == null ? 0 : row.otif - contextOtif;
+          const relative = difference > 1e-10 ? 'above' : difference < -1e-10 ? 'below' : 'equal';
+          rate.dataset.reference = relative;
+          const mark = add('span', '', relative === 'above' ? '▲' : relative === 'below' ? '▼' : '•');
+          mark.setAttribute('aria-hidden', 'true');
+          rate.append(mark, add('span', '', fmt(row.otif, percent)));
+          bindDetails(rate, row.label + ' · OTIF ' + fmt(row.otif, percent) + '\n' +
+            fmt(row.q) + ' de ' + fmt(row.pe) + ' pedidos e" &
+    "legíveis\n' +
+            (relative === 'above' ? 'Acima do' : relative === 'below' ? 'Abaixo do' : 'Igual ao') +
+            ' OTIF do recorte (' + fmt(contextOtif, percent) + ')');
+        }
+        const otifCell = add('td');
+        otifCell.append(rate);
+        el.append(otifCell, add('td', '', fmt(row.lead, decimal, ' dias')),
+          add('td', '', fmt(row.unitCost, currency)));
+        for (const value of [fmt(row.pe), fmt(row.misses), fmt(row.cp, currency), fmt(row.co, decimal, ' kg')]) {
+          const cell = add('td', '', value);
+          cell.hidden = !expanded;
+          el.append(cell);
+        }
+        return el;
+      }));
+    }
+
+    function render() {
+      closeTooltip();
+      const filters = fields.filter(([key]) => selected[key]);
+      const matches = (row, constraints) => constraints.every(([key]) => row[key] === selected[key]);
+      const rows = base.filter(row => matches(row, filters));
+      const months = group(rows, 'm').sort((a, b) => collator.compare(a.label, b.label));
+      const period = months.length < 2 ? monthLabel(months[0]?.label) :
+        monthLabel(months[0].label) + ' a ' + monthLabel(months.at(-1).label);
+      find('period').textContent = rows.length ?
+        period + ' · por data do pedido' + (data.meta.dataFinal ? ' · recorte Power BI até ' + data.meta.dataFinal.split('-').reverse().join('/') : '') :
+        'Sem pedidos no recorte';
+      find('clear').disabled = !filters.length;
+      find('filter-summary').textContent = filters.length ? '· ' + filters.length + ' ativos' : '· todos';
+      stateText.hidden = Boolean(rows.length);
+      content.hidden = !rows.length;
+      if (!rows.length) {
+        stateText.textContent = base.length ?
+          'Nenhum pedido corresponde à combinação selecionada. Ajuste ou limpe os filtros internos.' :
+          'Nenhum pedido no recorte atual do Power BI.';
+        chartData = [];
+        for (const name of ['kpis', 'chart', 'insights', 'table', 'priority', 'period-note']) f" &
+    "ind(name).replaceChildren();
+        return;
+      }
+      const total = tally(rows);
+      const latest = months.at(-1);
+      const priorKey = previousMonth(latest.label);
+      const windowMatch = compareCalendar(data.meta, latest.label, priorKey);
+      const dayMatches = row => !windowMatch.days || windowMatch.days.has(row.d);
+      const priorPool = comparison.some(row => row.m === priorKey) ? comparison : base;
+      const priorRows = priorPool.filter(row => row.m === priorKey && dayMatches(row) && matches(row, filters.filter(([key]) => key !== 'm')));
+      const latestRows = windowMatch.partial ? rows.filter(row => row.m === latest.label && dayMatches(row)) : null;
+      const latestComparable = !latestRows ? latest : latestRows.length ? tally(latestRows) : null;
+      const prior = priorRows.length ? tally(priorRows) : null;
+      const carriers = group(rows, 't'), regions = group(rows, 'r');
+      const comparableRegions = regions.filter(row => row.pe > 0);
+      const lowestRegion = comparableRegions.length > 1 ? ascendingOtif(comparableRegions).find(row => row.misses > 0) : null;
+      const impactRegion = descending(regions, 'misses')[0];
+      const serviceHeadline = total.pe ? 'OTIF de ' + fmt(total.otif, percent) + ' no recorte. ' : 'Sem pedidos elegíveis para OTIF. ';
+      const focusHeadline = impactRegion?.misses ? (comparableRegions.length > 1 ?
+        'Investigue ' + impactRegion.label + ': ' + fmt(impactRegion.misses) + ' das ' + fmt(total.misses) + ' falhas de OTIF.' :
+        fmt(total.misses) + ' falhas de OTIF entre ' + fmt(total.pe) + ' elegíveis.') :
+        total.pe ? 'Nenhuma falha entre ' + fmt(total.pe) + ' elegíveis.' : '';
+      find('priority').replaceChildren(add('strong', '', serviceHeadline), document.createTextNode(focusHeadline));
+      const anyPartial = months.some(row=>monthIsPartial(data.meta,row.label));
+      find('period-note').textContent = 'Cards resumem o recorte. ' + (prior ?
+        'Comparação mensal: ' + compa" &
+    "ctMonth(latest.label) + ' vs. ' + compactMonth(priorKey) +
+        (windowMatch.partial && windowMatch.label ? ' · ' + windowMatch.label + '.' : '.') : 'Sem comparação mensal no recorte.') +
+        (anyPartial ? ' * Mês parcial.' : '');
+      renderCards(total, latestComparable, prior, latest.label, priorKey, months, windowMatch);
+      const insights = [];
+      if (impactRegion?.misses) {
+        const isAlsoLowest = lowestRegion?.label === impactRegion.label;
+        const heading = comparableRegions.length === 1 ? 'Falhas no recorte · ' + impactRegion.label :
+          (isAlsoLowest ? 'Maior impacto e menor OTIF · ' : 'Maior impacto · ') + impactRegion.label;
+        const volume = comparableRegions.length > 1 ? fmt(impactRegion.misses) + ' das ' + fmt(total.misses) + ' falhas do recorte.' :
+          fmt(impactRegion.misses) + ' falhas em ' + fmt(impactRegion.pe) + ' elegíveis.';
+        insights.push([heading, volume + (isAlsoLowest ? ' OTIF de ' + fmt(impactRegion.otif, percent) + '.' : '') +
+          ' Revise as ocorrências para identificar ações.']);
+      }
+      if (lowestRegion && lowestRegion.label !== impactRegion?.label) insights.push(['Menor OTIF · ' + lowestRegion.label,
+        fmt(lowestRegion.otif, percent) + ' de OTIF, com ' + fmt(lowestRegion.misses) +
+        ' falhas em ' + fmt(lowestRegion.pe) + ' elegíveis. Investigue a recorrência das falhas.']);
+      if (!insights.length) insights.push(['Nível de serviço', total.pe ?
+        'Nenhuma falha entre os pedidos elegíveis do recorte.' : 'Sem pedidos elegíveis para comparar o OTIF.']);
+      find('insights').replaceChildren(...insights.map(([label, text]) => {
+        const block = add('div', 'ld-insight');
+        block.append(add('strong', '', label), add('p', '', text));
+        return block;
+      }));
+      chartData = months;
+      chartMedian = median(months.map(row => row.otif));
+      contextOtif = total.otif;
+      renderChart(true);
+      tableRows = carriers;
+      renderTable();
+" &
+    "    }
+    render();
+  } catch (error) {
+    stateText.textContent = 'Não foi possível carregar o painel. Verifique a medida Gold e o suporte a scripts do visual.';
+    stateText.hidden = false;
+    content.hidden = true;
+    console.error('Logistics Analytics', error);
+  }
+})();
+</script>
+</div>
+"

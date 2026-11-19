@@ -1,0 +1,141 @@
+JSON Gold Operacao Logistica =
+
+VAR DataReferencia = CALCULATE(MAX(fPedidos[Data_Atualizacao]), REMOVEFILTERS())
+VAR Carteira =
+    CALCULATETABLE(
+        SUMMARIZE(fPedidos, fPedidos[ID_Pedido], fPedidos[Status_Entrega], fPedidos[Transportadora], dDestino[Cidade_Destino], dDestino[UF_Destino], dDestino[Regiao_Destino], fPedidos[Data_Prevista_Entrega], fPedidos[Motivo_Atraso]),
+        KEEPFILTERS(fPedidos[Status_Entrega] IN {"Atrasado","Em trânsito"})
+    )
+RETURN
+"{""referencia"":" & (VAR TextoJSON = IF(NOT ISBLANK(DataReferencia), FORMAT(DataReferencia, "yyyy-MM-dd", "en-US"))
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pedidos"":" & ("[" & CONCATENATEX(
+    Carteira,
+    "{""id"":" & (VAR TextoJSON = fPedidos[ID_Pedido]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""s"":" & (VAR TextoJSON = fPedidos[Status_Entrega]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""t"":" & (VAR TextoJSON = fPedidos[Transportadora]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""cid"":" & (VAR TextoJSON = dDestino[Cidade_Destino]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""uf"":" & (VAR TextoJSON = dDestino[UF_Destino]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""r"":" & (VAR TextoJSON = dDestino[Regiao_Destino]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pre"":" & (VAR TextoJSON = IF(NOT ISBLANK(fPedidos[Data_Prevista_Entrega]), FORMAT(fPedidos[Data_Prevista_Entrega], "yyyy-MM-dd", "en-US"))
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""mot"":" & (VAR TextoJSON = fPedidos[Motivo_Atraso]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    "}",
+    ",", fPedidos[ID_Pedido], ASC
+) & "]") &
+    "}"

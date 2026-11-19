@@ -1,0 +1,2 @@
+Mediana mensal do OTIF =
+MEDIANX(FILTER(VALUES(dCalendario[AnoMes]), NOT ISBLANK([OTIF %])), [OTIF %])

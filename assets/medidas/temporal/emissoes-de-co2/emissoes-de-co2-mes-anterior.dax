@@ -1,0 +1,2 @@
+Emissões de CO₂ mês anterior =
+IF(HASONEVALUE(dCalendario[AnoMes]), CALCULATE([Emissões de CO₂], PREVIOUSMONTH(dCalendario[Data])))

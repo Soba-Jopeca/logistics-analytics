@@ -1,85 +1,34 @@
-# Skills e prompts reutilizáveis
+# Skills e prompts usados no projeto
 
 [Voltar ao README](../README.md) · [Conexão MCP](conexao-mcp.md)
 
-O trabalho foi conduzido em etapas curtas com evidência de aceitação. A skill **`dax-creation-expert`** orientou diagnóstico, granularidade, contexto de filtro e validação. A skill **`dataviz-html-dax`** orientou a passagem DAX → JSON → HTML, os filtros internos e os testes de renderização. Os prompts abaixo são versões condensadas para reprodução do processo.
+As duas skills abaixo são as versões usadas no projeto, incluindo os arquivos de referência disponíveis. Os prompts de desenvolvimento foram recuperados do trabalho original. Os links para caminhos pessoais foram substituídos pelo nome da skill e as quebras de linha foram normalizadas para leitura no GitHub.
 
-## Skill, prompt e ferramenta
+| Skill | Em que etapa entrou | Arquivo |
+| --- | --- | --- |
+| `dax-creation-expert` | Diagnóstico, modelo semântico, definição e validação de medidas. | [SKILL.md](skills/dax-creation-expert/SKILL.md) |
+| `dataviz-html-dax` | Contrato JSON, construção de visual, filtros internos e revisão de renderização. | [SKILL.md](skills/dataviz-html-dax/SKILL.md) · [Referências](skills/dataviz-html-dax/references/) |
 
-| Peça | Responsabilidade |
-| --- | --- |
-| MCP | Expõe ferramentas para ler ou alterar o modelo e executar consultas. |
-| Skill | Define um método reaplicável, como validar granularidade antes de calcular taxas. |
-| Prompt | Fixa o objetivo, os dados de entrada, as decisões autorizadas e as evidências da etapa atual. |
+Para recriar uma skill com o assistente, abra o **Skill Creator** no seletor de skills do Codex ou invoque `$skill-creator` e forneça o arquivo de referência. Para reutilizar a versão publicada, copie a pasta completa para `.agents/skills/` no seu projeto, como descrito no [guia de conexão](conexao-mcp.md#5-criar-ou-reutilizar-as-skills).
 
-No Codex, uma skill tem uma pasta e um arquivo `SKILL.md` com metadados YAML. Para compartilhar no repositório, coloque-a sob `.agents/skills/<nome>/SKILL.md`. Em seguida, invoque a skill pelo seletor ou por nome no prompt. [Skills no Codex](https://developers.openai.com/codex/skills)
+O **MCP** disponibiliza operações. A **skill** define um método reaplicável. O **prompt** define o objetivo, o escopo e o que deve ser demonstrado na tarefa atual.
 
-### Exemplo adaptável de SKILL.md
+## Prompts de desenvolvimento
 
-```markdown
----
-name: revisao-bi-logistico
-description: Use ao modelar ou validar pedidos, OTIF, atraso e custo em Power BI com MCP.
----
+| Etapa | Prompt | O que conferir |
+| --- | --- | --- |
+| 1. Fonte e modelo | [Diagnóstico e modelagem](prompts/01-diagnostico-e-modelo.md) | Uma linha por pedido, 1.000 IDs distintos, calendário e relacionamentos consistentes. |
+| 2. Medidas | [Criação e validação DAX](prompts/02-medidas-dax.md) | 827 pedidos OTIF de 955 elegíveis. Separação entre atraso histórico e status pendente. |
+| 3. Contrato de dados | [JSON Gold](prompts/03-json-gold.md) | Totais reconciliados, filtro preservado e bases suficientes para taxas e médias. |
+| 4. Visual principal | [HTML da análise](prompts/04-html-analise.md) | Filtros, estados vazios e diferenças entre renderização no navegador e no canvas. |
+| 5. Investigação | [Refinamento analítico](prompts/05-refinamento-analitico.md) | Priorização por impacto e taxa, leitura proporcional a cada recorte. |
+| 6. Acabamento | [Capa e acabamento](prompts/06-capa-e-acabamento.md) | Animação acessível, versão final do OTIF e navegação no Power BI. |
 
-Leia o modelo e confirme a granularidade, a chave e a data ativa.
-Confirme o numerador, o denominador e o tratamento de casos vazios.
-Preserve filtros externos. Relate ambiguidade antes de inventar uma regra.
-Valide medidas em DAX no total, em um período e em uma dimensão.
-Ao revisar HTML, preserve medidas e compare o resultado no canvas.
-```
+Os prompts registram o objetivo de cada etapa, inclusive requisitos que passaram por revisão. Consulte a [construção e validação](construcao-e-validacao.md) e o [catálogo de medidas](../assets/medidas/README.md) para ver a composição final, com a separação entre Estratégia e Operação.
 
-## Sequência de prompts
+## Mensagens para iterar com segurança
 
-### 1. Diagnóstico e modelo
+- [Revisões que aconteceram no projeto](prompts/07-revisoes-do-projeto.md)
+- [Exemplos de mensagens de melhoria](prompts/08-mensagens-de-melhoria.md)
 
-```text
-Use o Power BI Authoring MCP no arquivo aberto. Primeiro leia a fonte.
-Quantifique linhas, colunas, chaves, duplicidades, nulos e pedidos sem
-entrega. Confirme se a granularidade é pedido ou item. Depois proponha
-staging, fato, dimensões e calendário. Preserve cada pedido e não impute
-datas de entrega. Valide chaves, relações e contagem antes e depois.
-```
-
-### 2. Medidas DAX e critérios de aceite
-
-```text
-Leia o modelo e use a skill dax-creation-expert. Crie as medidas a partir
-dos campos confirmados. Para OTIF, registre a população elegível, a
-interseção entre prazo e completude e a taxa. Separe atraso em entrega
-concluída de status Atrasado na carteira. Valide total, mês, dimensões,
-denominador zero e mês sem dados. Mostre os valores encontrados.
-```
-
-### 3. JSON Gold e comparação mensal
-
-```text
-Crie uma medida JSON com metadados, KPIs, séries e base interativa.
-Reutilize medidas validadas. Para taxas e médias exporte numeradores
-e denominadores. Preserve filtros do Power BI. Compare dias
-equivalentes em meses parciais. Teste o parse e reconcilie cada total.
-```
-
-### 4. Visual e narrativa
-
-```text
-Use a skill dataviz-html-dax. Separe Estratégia e Operação. Na primeira
-página mostre um resumo com até duas prioridades, quatro KPIs e uma
-tendência alternável. Na Operação mostre a posição da carteira e ordene
-a fila por status e previsão. Não introduza metas, faixas de risco nem
-causas que não estejam demonstradas. Use o JSON como fonte do visual.
-```
-
-### 5. Revisão antes de salvar e publicar
-
-```text
-Verifique o modelo aberto via MCP. Crie uma cópia oculta de qualquer
-medida existente antes da alteração. Execute consultas DAX e confira
-os visuais no canvas. Teste filtros, recortes vazios, teclado e largura
-reduzida. Registre o que foi aprovado e o que ficou pendente. Aguarde
-autorização para salvar ou publicar.
-```
-
-## Para obter uma resposta verificável
-
-Dê ao agente o **nome do arquivo**, o **escopo permitido**, uma **regra de negócio confirmada** e uma **consulta ou resultado esperado**. Um critério concreto neste caso é **827 pedidos OTIF de 955 elegíveis no total**. Uma alteração estética deve preservar esses números e a população em cada recorte. Se o agente não consegue observar o resultado ou o canvas, peça que diferencie execução, verificação e pendência.
+Antes de enviar uma revisão, indique **qual objeto pode mudar**, **qual cálculo deve ser preservado** e **como validar o resultado**. Um ajuste visual, por exemplo, deve preservar os 827 pedidos OTIF, os 955 elegíveis e o comportamento por recorte.

@@ -1,0 +1,2 @@
+Total de pedidos variação absoluta =
+IF(NOT ISBLANK([Total de pedidos]) && NOT ISBLANK([Total de pedidos mês anterior]), [Total de pedidos] - [Total de pedidos mês anterior])

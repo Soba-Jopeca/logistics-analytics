@@ -1,0 +1,2 @@
+Pedidos com avaria =
+COALESCE(CALCULATE([Total de pedidos], KEEPFILTERS(fPedidos[Pedido_Avariado] = "Sim")),0)

@@ -1,0 +1,2 @@
+Total de pedidos mês anterior =
+IF(HASONEVALUE(dCalendario[AnoMes]), CALCULATE([Total de pedidos], PREVIOUSMONTH(dCalendario[Data])))

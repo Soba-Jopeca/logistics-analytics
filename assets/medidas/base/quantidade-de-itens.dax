@@ -1,0 +1,2 @@
+Quantidade de itens =
+SUM(fPedidos[Quantidade_Pedida])

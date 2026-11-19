@@ -1,0 +1,2 @@
+Lead time médio variação percentual =
+DIVIDE([Lead time médio variação absoluta],[Lead time médio mês anterior])

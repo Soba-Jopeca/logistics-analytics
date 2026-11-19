@@ -1,0 +1,2 @@
+Quantidade média por pedido =
+DIVIDE([Quantidade de itens],[Total de pedidos])

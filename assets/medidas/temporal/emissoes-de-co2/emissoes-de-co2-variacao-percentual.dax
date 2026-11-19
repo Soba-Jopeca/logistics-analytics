@@ -1,0 +1,2 @@
+Emissões de CO₂ variação percentual =
+DIVIDE([Emissões de CO₂ variação absoluta],[Emissões de CO₂ mês anterior])

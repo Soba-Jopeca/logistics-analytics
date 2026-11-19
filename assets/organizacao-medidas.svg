@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="830" viewBox="0 0 1440 830" role="img" aria-labelledby="title description">
+<title id="title">Organização das medidas do Power BI</title><desc id="description">53 medidas ativas em sete pastas: Base, Serviço, Qualidade, Derivada, Temporal, Gold e Apresentação.</desc>
+<defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 Z" fill="#557b8a"/></marker></defs>
+<rect width="1440" height="830" fill="#f1f5f8"/><g font-family="Segoe UI, Arial, sans-serif">
+<text x="40" y="65" fill="#112c42" font-size="34" font-weight="750" text-anchor="start">Organização das medidas</text>
+<text x="40" y="101" fill="#496174" font-size="20" font-weight="400" text-anchor="start">Pastas de exibição lidas do modelo semântico via MCP</text>
+<rect x="40" y="134" width="1360" height="77" rx="13" fill="#112c42" stroke="#112c42"/>
+<text x="68" y="180" fill="#f4faff" font-size="26" font-weight="750" text-anchor="start">Tabela Medidas</text>
+<rect x="1223" y="158" width="154" height="28" rx="14" fill="#e0f3ee" stroke="#e0f3ee"/><text x="1300.0" y="177" fill="#006d64" font-size="13" font-weight="700" text-anchor="middle">53 medidas ativas</text>
+<rect x="40" y="238" width="670" height="121" rx="13" fill="#fff" stroke="#d6e2eb"/>
+<text x="61" y="270" fill="#112c42" font-size="21" font-weight="730" text-anchor="start">Base</text>
+<rect x="610" y="250" width="78" height="28" rx="14" fill="#e4f4ef" stroke="#e4f4ef"/><text x="649.0" y="269" fill="#006d64" font-size="13" font-weight="700" text-anchor="middle">7 medidas</text>
+<text x="61" y="297" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Total de pedidos</text>
+<text x="61" y="315" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Custo logístico</text>
+<text x="61" y="333" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Emissões de CO₂</text>
+<rect x="40" y="377" width="670" height="121" rx="13" fill="#fff" stroke="#d6e2eb"/>
+<text x="61" y="409" fill="#112c42" font-size="21" font-weight="730" text-anchor="start">Serviço</text>
+<rect x="610" y="389" width="78" height="28" rx="14" fill="#e4f4ef" stroke="#e4f4ef"/><text x="649.0" y="408" fill="#006d64" font-size="13" font-weight="700" text-anchor="middle">15 medidas</text>
+<text x="61" y="436" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Pedidos elegíveis para OTIF</text>
+<text x="61" y="454" fill="#496174" font-size="15" font-weight="400" text-anchor="start">OTIF %</text>
+<text x="61" y="472" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Lead time médio</text>
+<rect x="40" y="516" width="670" height="121" rx="13" fill="#fff" stroke="#d6e2eb"/>
+<text x="61" y="548" fill="#112c42" font-size="21" font-weight="730" text-anchor="start">Qualidade</text>
+<rect x="610" y="528" width="78" height="28" rx="14" fill="#e4f4ef" stroke="#e4f4ef"/><text x="649.0" y="547" fill="#006d64" font-size="13" font-weight="700" text-anchor="middle">7 medidas</text>
+<text x="61" y="575" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Pedidos com devolução</text>
+<text x="61" y="593" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Avarias %</text>
+<text x="61" y="611" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Nota média do cliente</text>
+<rect x="40" y="655" width="670" height="121" rx="13" fill="#fff" stroke="#d6e2eb"/>
+<text x="61" y="687" fill="#112c42" font-size="21" font-weight="730" text-anchor="start">Derivada</text>
+<rect x="610" y="667" width="78" height="28" rx="14" fill="#e4f4ef" stroke="#e4f4ef"/><text x="649.0" y="686" fill="#006d64" font-size="13" font-weight="700" text-anchor="middle">3 medidas</text>
+<text x="61" y="714" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Custo logístico por pedido</text>
+<text x="61" y="732" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Quantidade média por pedido</text>
+<rect x="730" y="238" width="670" height="153" rx="13" fill="#fff" stroke="#d6e2eb"/>
+<text x="751" y="270" fill="#112c42" font-size="21" font-weight="730" text-anchor="start">Temporal</text>
+<rect x="1300" y="250" width="78" height="28" rx="14" fill="#e4f4ef" stroke="#e4f4ef"/><text x="1339.0" y="269" fill="#006d64" font-size="13" font-weight="700" text-anchor="middle">16 medidas</text>
+<text x="751" y="297" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Total de pedidos · OTIF %</text>
+<text x="751" y="315" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Custo logístico · Lead time médio</text>
+<text x="751" y="333" fill="#496174" font-size="15" font-weight="400" text-anchor="start">Emissões de CO₂ · Mediana mensal do OTIF</text>
+<text x="751" y="360" fill="#496174" font-size="14" font-weight="400" text-anchor="start">Cinco subpastas por indicador e uma medida de mediana na raiz.</text>
+<rect x="730" y="409" width="670" height="153" rx="13" fill="#fff" stroke="#d6e2eb"/>
+<text x="751" y="441" fill="#112c42" font-size="21" font-weight="730" text-anchor="start">Gold</text>
+<rect x="1300" y="421" width="78" height="28" rx="14" fill="#e4f4ef" stroke="#e4f4ef"/><text x="1339.0" y="440" fill="#006d64" font-size="13" font-weight="700" text-anchor="middle">2 medidas</text>
+<text x="751" y="468" fill="#496174" font-size="15" font-weight="400" text-anchor="start">JSON Gold Dashboard Logistica</text>
+<text x="751" y="486" fill="#496174" font-size="15" font-weight="400" text-anchor="start">JSON Gold Operacao Logistica</text>
+<rect x="730" y="580" width="670" height="153" rx="13" fill="#fff" stroke="#d6e2eb"/>
+<text x="751" y="612" fill="#112c42" font-size="21" font-weight="730" text-anchor="start">Apresentação</text>
+<rect x="1300" y="592" width="78" height="28" rx="14" fill="#e4f4ef" stroke="#e4f4ef"/><text x="1339.0" y="611" fill="#006d64" font-size="13" font-weight="700" text-anchor="middle">3 medidas</text>
+<text x="751" y="639" fill="#496174" font-size="15" font-weight="400" text-anchor="start">HTML Dashboard Logistica</text>
+<text x="751" y="657" fill="#496174" font-size="15" font-weight="400" text-anchor="start">HTML Capa Logistica</text>
+<text x="751" y="675" fill="#496174" font-size="15" font-weight="400" text-anchor="start">HTML Operacao Logistica</text>
+<text x="1400" y="803" fill="#496174" font-size="15" font-weight="400" text-anchor="end">O catálogo lista as expressões completas e a visibilidade no modelo.</text>
+</g></svg>

@@ -1,0 +1,2 @@
+Valor dos pedidos =
+SUM(fPedidos[Valor_Pedido_R$])

@@ -1,0 +1,2 @@
+Emissões de CO₂ variação absoluta =
+IF(NOT ISBLANK([Emissões de CO₂]) && NOT ISBLANK([Emissões de CO₂ mês anterior]), [Emissões de CO₂] - [Emissões de CO₂ mês anterior])

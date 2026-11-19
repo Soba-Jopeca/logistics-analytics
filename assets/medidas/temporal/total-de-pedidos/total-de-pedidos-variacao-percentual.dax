@@ -1,0 +1,2 @@
+Total de pedidos variação percentual =
+DIVIDE([Total de pedidos variação absoluta],[Total de pedidos mês anterior])

@@ -1,0 +1,2 @@
+Lead time médio =
+CALCULATE(AVERAGE(fPedidos[Lead_Time_Total_Dias]), KEEPFILTERS(NOT ISBLANK(fPedidos[Data_Entrega])))

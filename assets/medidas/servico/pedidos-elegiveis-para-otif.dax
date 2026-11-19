@@ -1,0 +1,2 @@
+Pedidos elegíveis para OTIF =
+COALESCE(CALCULATE([Total de pedidos], KEEPFILTERS(fPedidos[Entrega_No_Prazo] IN {"Sim","Não"}), KEEPFILTERS(fPedidos[Pedido_Completo] IN {"Sim","Não"})),0)

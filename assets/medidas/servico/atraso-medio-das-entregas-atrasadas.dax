@@ -1,0 +1,2 @@
+Atraso médio das entregas atrasadas =
+CALCULATE(AVERAGE(fPedidos[Dias_Atraso]), KEEPFILTERS(NOT ISBLANK(fPedidos[Data_Entrega])), KEEPFILTERS(fPedidos[Dias_Atraso] > 0))

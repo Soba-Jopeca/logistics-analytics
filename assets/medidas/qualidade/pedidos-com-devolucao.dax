@@ -1,0 +1,2 @@
+Pedidos com devolução =
+COALESCE(CALCULATE([Total de pedidos], KEEPFILTERS(fPedidos[Devolucao] = "Sim")),0)

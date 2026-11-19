@@ -1,0 +1,2 @@
+Total de pedidos =
+DISTINCTCOUNT(fPedidos[ID_Pedido])

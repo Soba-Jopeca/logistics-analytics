@@ -1,0 +1,2 @@
+Custo logístico sobre valor dos pedidos =
+DIVIDE([Custo logístico],[Valor dos pedidos])

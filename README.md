@@ -2,7 +2,7 @@
 
 Estudo de caso de **BI logístico com Power BI Desktop, OpenAI Codex e Model Context Protocol (MCP)**. O projeto transforma uma base simulada de pedidos em duas visões de decisão. A **Estratégia** orienta onde melhorar serviço e custo. A **Operação** mostra quais pedidos precisam de atenção na posição registrada pela fonte.
 
-**[Abrir o dashboard interativo no Power BI](https://app.powerbi.com/view?r=eyJrIjoiM2JhY2RjODEtM2IzOC00Y2ViLTgxM2EtNjU1MWQwZGRmMGMxIiwidCI6IjZkNTRhM2Y3LTM4YzItNDM2Ni1iNGNiLWVlZTg4NjI0NDI5NiJ9&pageName=556cee0099956be5cb00)** · [Guia de conexão MCP](docs/conexao-mcp.md) · [Prompts e skills](docs/prompts-e-skills.md)
+**[Abrir o dashboard interativo no Power BI](https://app.powerbi.com/view?r=eyJrIjoiM2JhY2RjODEtM2IzOC00Y2ViLTgxM2EtNjU1MWQwZGRmMGMxIiwidCI6IjZkNTRhM2Y3LTM4YzItNDM2Ni1iNGNiLWVlZTg4NjI0NDI5NiJ9&pageName=556cee0099956be5cb00)** · [Guia de conexão MCP](docs/conexao-mcp.md) · [Skills e prompts](docs/prompts-e-skills.md) · [Base simulada](docs/base/README.md)
 
 [![Prévia da página Estratégia, com quatro indicadores, tendência mensal e prioridades por região](assets/estrategia.png)](https://app.powerbi.com/view?r=eyJrIjoiM2JhY2RjODEtM2IzOC00Y2ViLTgxM2EtNjU1MWQwZGRmMGMxIiwidCI6IjZkNTRhM2Y3LTM4YzItNDM2Ni1iNGNiLWVlZTg4NjI0NDI5NiJ9&pageName=556cee0099956be5cb00)
 
@@ -48,14 +48,27 @@ flowchart LR
 
 O **Codex** recebeu objetivos, regras e critérios de aceite em prompts por etapa. O **Power BI Authoring MCP**, da Microsoft, expôs operações de leitura, modelagem, edição de medidas e execução de DAX no Desktop. As **skills** codificaram o método de trabalho. A colocação dos visuais e a publicação foram verificadas no Power BI.
 
-## Leia e reproduza
+## Reproduza no seu ambiente
+
+1. Baixe a [base simulada completa](docs/base/README.md) e abra o Power BI Desktop.
+2. Configure o [Codex com o executável local do Power BI Authoring MCP](docs/conexao-mcp.md).
+3. Use as [duas skills e os prompts do projeto](docs/prompts-e-skills.md) para construir por etapas.
+4. Consulte as [53 medidas exportadas](assets/medidas/README.md) e confira os resultados com as consultas de validação. As [consultas Power Query exportadas](examples/power-query/README.md) permitem reproduzir o modelo com a base completa.
+
+![Diagrama do modelo estrela gerado com dados lidos pelo MCP](assets/modelo-relacionamentos.svg)
+
+[Ver os relacionamentos do modelo](docs/modelo-e-medidas.md) · [Ver organização das medidas](assets/organizacao-medidas.svg) · [Ver catálogo com todas as expressões DAX](assets/medidas/README.md)
+
+## Documentação
 
 | Documento | Conteúdo |
 | --- | --- |
 | [Caso de negócio](docs/caso-de-negocio.md) | Perguntas, desenho das páginas, definições, evidências e limites. |
 | [Conexão Codex ↔ Power BI via MCP](docs/conexao-mcp.md) | Instalação no Windows, configuração, primeiro teste e solução de problemas. |
 | [Construção e validação](docs/construcao-e-validacao.md) | Power Query, modelo, DAX, JSON Gold, experiência HTML e validação. |
-| [Skills e prompts reutilizáveis](docs/prompts-e-skills.md) | Exemplo de skill e prompts do processo em etapas. |
+| [Skills e prompts](docs/prompts-e-skills.md) | Duas skills usadas, prompts de desenvolvimento e mensagens de revisão. |
+| [Base simulada](docs/base/README.md) | Planilha de origem para reprodução, dicionário e premissas. |
+| [Catálogo de medidas](assets/medidas/README.md) | As 53 expressões ativas, separadas pelas pastas do Power BI. |
 | [Consultas DAX de conferência](examples/validacao.dax) | Totais, denominadores, períodos equivalentes e carteira operacional. |
 | [Exemplo de incorporação](examples/powerbi-embed.html) | HTML responsivo para incorporar o relatório em um site. |
 

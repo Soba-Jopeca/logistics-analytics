@@ -1,0 +1,2 @@
+Emissões de CO₂ =
+SUM(fPedidos[Emissao_CO2_kg])

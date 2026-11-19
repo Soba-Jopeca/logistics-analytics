@@ -1,0 +1,2 @@
+Pedidos entregues =
+COALESCE(CALCULATE([Total de pedidos], KEEPFILTERS(NOT ISBLANK(fPedidos[Data_Entrega]))),0)

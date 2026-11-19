@@ -1,0 +1,740 @@
+JSON Gold Dashboard Logistica =
+
+VAR Inicio = MIN(fPedidos[Data_Pedido])
+VAR Fim = MAX(fPedidos[Data_Pedido])
+VAR MesesComPedidos = SUMMARIZE(fPedidos, dCalendario[AnoMes])
+VAR TotalMeses = COALESCE(COUNTROWS(MesesComPedidos), 0)
+-- Datas de cobertura e de referência descrevem a fonte. Os fatos serializados continuam no contexto dos filtros.
+VAR PrimeiroDiaFonte = CALCULATE(MIN(fPedidos[Data_Pedido]), REMOVEFILTERS())
+VAR UltimoDiaFonte = CALCULATE(MAX(fPedidos[Data_Pedido]), REMOVEFILTERS())
+VAR AtualizacaoFonte = CALCULATE(MAX(fPedidos[Data_Atualizacao]), REMOVEFILTERS())
+VAR DatasNoRecorte =
+    FILTER(VALUES(dCalendario[Data]), dCalendario[Data] >= PrimeiroDiaFonte && dCalendario[Data] <= UltimoDiaFonte)
+VAR CalendarioComparavelJSON =
+    "[" & CONCATENATEX(MesesComPedidos,
+        VAR Mes = dCalendario[AnoMes]
+        VAR PrimeiroDia = DATE(VALUE(LEFT(Mes, 4)), VALUE(RIGHT(Mes, 2)), 1)
+        VAR UltimoDia = EOMONTH(PrimeiroDia, 0)
+        VAR DatasDoMes = FILTER(DatasNoRecorte, dCalendario[Data] >= PrimeiroDia && dCalendario[Data] <= UltimoDia)
+        RETURN "{""m"":""" & Mes & """,""dias"":[" &
+            CONCATENATEX(DatasDoMes, FORMAT(DAY(dCalendario[Data]), "0", "en-US"), ",", dCalendario[Data], ASC) & "]}",
+        ",", dCalendario[AnoMes], ASC) & "]"
+VAR DescricaoPeriodo =
+    IF(NOT ISBLANK(Inicio), FORMAT(Inicio, "dd/MM/yyyy", "pt-BR") & " a " & FORMAT(Fim, "dd/MM/yyyy", "pt-BR"))
+VAR Contexto =
+    IF(TotalMeses = 0, "Nenhum pedido no contexto filtrado.",
+        FORMAT([Total de pedidos], "#,0", "pt-BR") & " pedidos em " &
+        FORMAT(TotalMeses, "0", "pt-BR") & " meses pela data do pedido no contexto dos filtros do relatório.")
+-- Meses completos para as comparações que precisam de datas fora do recorte atual.
+VAR MesesParaComparar =
+    DISTINCT(UNION(MesesComPedidos, FILTER(VALUES(dCalendario[AnoMes]), HASONEVALUE(dCalendario[AnoMes]))))
+VAR MesesAnterioresNecessarios =
+    DISTINCT(SELECTCOLUMNS(MesesParaComparar,
+        "@MesAnterior", FORMAT(EDATE(DATE(VALUE(LEFT(dCalendario[AnoMes], 4)), VALUE(RIGHT(dCalendario[AnoMes], 2)), 1), -1), "yyyy-MM", "en-US")))
+VAR MesesAnterioresForaDoRecorte =
+    FILTER(MesesAnterioresNecessarios,
+        VAR MesAnterior = [@MesAnterior]
+        VAR DiasVisiveis = CALCULATE(COUNTROWS(dCalendario), KEEPFILTERS(dCalendario[AnoMes] = MesAnterior))
+        VAR DiasDoMes = CALCULATE(COUNTROWS(dCalendario), REMOVEFILTERS(dCalendario), dCalendario[AnoMes] = MesAnterior)
+        RETURN COALESCE(DiasVisiveis, 0) < DiasDoMes)
+VAR GruposAtuais =
+ADDCOLUMNS(
+    SUMMARIZE(fPedidos, dCalendario[AnoMes], dDestino[Regiao_Destino], dTransportadora[Transportadora], fPedidos[Data_Pedido], dModal[Modal], dProduto[Categoria_Produto], dProduto[Produto], fPedidos[Motivo_Atraso], dStatus[Status_Entrega]),
+    "@qt", [Quantidade de itens],
+    "@p", [Total de pedidos],
+    "@q", [Pedidos OTIF],
+    "@pe", [Pedidos elegíveis para OTIF],
+    "@vp", [Valor dos pedidos],
+    "@cp", [Custo logístico],
+    "@ln", [Lead times válidos],
+    "@co", [Emissões de CO₂],
+    "@an", [Atrasos válidos],
+    "@dv", [Pedidos com devolução],
+    "@av", [Pedidos com avaria],
+    "@ex", [Pedidos extraviados],
+    "@en", [Pedidos entregues],
+    "@pa", [Pedidos com status Atrasado],
+    "@ea", [Entregas atrasadas],
+    "@ai", [Entregas com atraso informado],
+    "@nn", [Avaliações válidas],
+    "@lt", [Lead time médio] * [Lead times válidos],
+    "@at", [Atraso médio das entregas atrasadas] * [Atrasos válidos],
+    "@ns", [Nota média do cliente] * [Avaliações válidas]
+)
+VAR GruposComparacao =
+    CALCULATETABLE(
+ADDCOLUMNS(
+    SUMMARIZE(fPedidos, dCalendario[AnoMes], dDestino[Regiao_Destino], dTransportadora[Transportadora], fPedidos[Data_Pedido], dModal[Modal], dProduto[Categoria_Produto], dProduto[Produto], fPedidos[Motivo_Atraso], dStatus[Status_Entrega]),
+    "@qt", [Quantidade de itens],
+    "@p", [Total de pedidos],
+    "@q", [Pedidos OTIF],
+    "@pe", [Pedidos elegíveis para OTIF],
+    "@vp", [Valor dos pedidos],
+    "@cp", [Custo logístico],
+    "@ln", [Lead times válidos],
+    "@co", [Emissões de CO₂],
+    "@an", [Atrasos válidos],
+    "@dv", [Pedidos com devolução],
+    "@av", [Pedidos com avaria],
+    "@ex", [Pedidos extraviados],
+    "@en", [Pedidos entregues],
+    "@pa", [Pedidos com status Atrasado],
+    "@ea", [Entregas atrasadas],
+    "@ai", [Entregas com atraso informado],
+    "@nn", [Avaliações válidas],
+    "@lt", [Lead time médio] * [Lead times válidos],
+    "@at", [Atraso médio das entregas atrasadas] * [Atrasos válidos],
+    "@ns", [Nota média do cliente] * [Avaliações válidas]
+),
+        REMOVEFILTERS(dCalendario),
+        TREATAS(MesesAnterioresForaDoRecorte, dCalendario[AnoMes])
+    )
+RETURN
+"{""meta"":" & "{""periodo"":" & (VAR TextoJSON = DescricaoPeriodo
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""dataInicial"":" & (VAR TextoJSON = IF(NOT ISBLANK(Inicio), FORMAT(Inicio, "yyyy-MM-dd", "en-US"))
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""dataFinal"":" & (VAR TextoJSON = IF(NOT ISBLANK(Fim), FORMAT(Fim, "yyyy-MM-dd", "en-US"))
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""quantidadeMeses"":" & (VAR NumeroJSON = TotalMeses RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""mesReferencia"":" & (VAR TextoJSON = SELECTEDVALUE(dCalendario[AnoMes])
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""contexto"":" & (VAR TextoJSON = Contexto
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""fonte"":" & (VAR TextoJSON = "base_logistica_simulada_brasil.xlsx / TabelaBaseLogistica"
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""fonteAtualizadaEm"":" & (VAR TextoJSON = IF(NOT ISBLANK(AtualizacaoFonte), FORMAT(AtualizacaoFonte, "yyyy-MM-dd", "en-US"))
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""baseSimulada"":" & "true" &
+    ",""calendarioComparavel"":" & CalendarioComparavelJSON &
+    "}" &
+    ",""kpis"":" & "{""pedidos"":" & (VAR NumeroJSON = [Total de pedidos] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""itens"":" & (VAR NumeroJSON = [Quantidade de itens] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""valorPedidos"":" & (VAR NumeroJSON = [Valor dos pedidos] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""custoLogistico"":" & (VAR NumeroJSON = [Custo logístico] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""custoPorPedido"":" & (VAR NumeroJSON = [Custo logístico por pedido] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""custoSobreValorPedidos"":" & (VAR NumeroJSON = [Custo logístico sobre valor dos pedidos] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregues"":" & (VAR NumeroJSON = [Pedidos entregues] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""statusAtrasado"":" & (VAR NumeroJSON = [Pedidos com status Atrasado] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""statusAtrasadoPercentual"":" & (VAR NumeroJSON = [Pedidos com status Atrasado %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregasAtrasadas"":" & (VAR NumeroJSON = [Entregas atrasadas] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregasAtrasadasPercentual"":" & (VAR NumeroJSON = [Entregas atrasadas %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""elegiveisOtif"":" & (VAR NumeroJSON = [Pedidos elegíveis para OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pedidosOtif"":" & (VAR NumeroJSON = [Pedidos OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""otifPercentual"":" & (VAR NumeroJSON = [OTIF %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""leadTimeMedio"":" & (VAR NumeroJSON = [Lead time médio] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""atrasoMedio"":" & (VAR NumeroJSON = [Atraso médio das entregas atrasadas] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""devolucoes"":" & (VAR NumeroJSON = [Pedidos com devolução] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""avarias"":" & (VAR NumeroJSON = [Pedidos com avaria] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""extravios"":" & (VAR NumeroJSON = [Pedidos extraviados] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""emissoesCO2"":" & (VAR NumeroJSON = [Emissões de CO₂] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""notaMedia"":" & (VAR NumeroJSON = [Nota média do cliente] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""medianaMensalOtif"":" & (VAR NumeroJSON = [Mediana mensal do OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""devolucoesPercentual"":" & (VAR NumeroJSON = [Devoluções %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""avariasPercentual"":" & (VAR NumeroJSON = [Avarias %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""extraviosPercentual"":" & (VAR NumeroJSON = [Extravios %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""variacoesMesAnterior"":" & "{""pedidos"":" & "{""anterior"":" & (VAR NumeroJSON = [Total de pedidos mês anterior] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""absoluta"":" & (VAR NumeroJSON = [Total de pedidos variação absoluta] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""percentual"":" & (VAR NumeroJSON = [Total de pedidos variação percentual] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}" &
+    ",""otifPercentual"":" & "{""anterior"":" & (VAR NumeroJSON = [OTIF % mês anterior] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""absoluta"":" & (VAR NumeroJSON = [OTIF % variação absoluta] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""percentual"":" & (VAR NumeroJSON = [OTIF % variação percentual] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}" &
+    ",""custoLogistico"":" & "{""anterior"":" & (VAR NumeroJSON = [Custo logístico mês anterior] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""absoluta"":" & (VAR NumeroJSON = [Custo logístico variação absoluta] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""percentual"":" & (VAR NumeroJSON = [Custo logístico variação percentual] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}" &
+    ",""leadTimeMedio"":" & "{""anterior"":" & (VAR NumeroJSON = [Lead time médio mês anterior] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""absoluta"":" & (VAR NumeroJSON = [Lead time médio variação absoluta] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""percentual"":" & (VAR NumeroJSON = [Lead time médio variação percentual] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}" &
+    ",""emissoesCO2"":" & "{""anterior"":" & (VAR NumeroJSON = [Emissões de CO₂ mês anterior] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""absoluta"":" & (VAR NumeroJSON = [Emissões de CO₂ variação absoluta] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""percentual"":" & (VAR NumeroJSON = [Emissões de CO₂ variação percentual] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}" &
+    "}" &
+    "}" &
+    ",""series"":" & "{""mensal"":" & ("[" & CONCATENATEX(
+    MesesComPedidos,
+    "{""m"":" & (VAR TextoJSON = dCalendario[AnoMes]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pedidos"":" & (VAR NumeroJSON = [Total de pedidos] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""otifPercentual"":" & (VAR NumeroJSON = [OTIF %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""custoLogistico"":" & (VAR NumeroJSON = [Custo logístico] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""leadTimeMedio"":" & (VAR NumeroJSON = [Lead time médio] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""emissoesCO2"":" & (VAR NumeroJSON = [Emissões de CO₂] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}",
+    ",", dCalendario[AnoMes], ASC
+) & "]") &
+    "}" &
+    ",""rankings"":" & "{""transportadoras"":" & ("[" & CONCATENATEX(
+    FILTER(SUMMARIZE(fPedidos, dTransportadora[Transportadora]), NOT ISBLANK(dTransportadora[Transportadora])),
+    "{""nome"":" & (VAR TextoJSON = dTransportadora[Transportadora]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pedidos"":" & (VAR NumeroJSON = [Total de pedidos] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""otifPercentual"":" & (VAR NumeroJSON = [OTIF %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""custoLogistico"":" & (VAR NumeroJSON = [Custo logístico] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""leadTimeMedio"":" & (VAR NumeroJSON = [Lead time médio] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""emissoesCO2"":" & (VAR NumeroJSON = [Emissões de CO₂] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregues"":" & (VAR NumeroJSON = [Pedidos entregues] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""elegiveisOtif"":" & (VAR NumeroJSON = [Pedidos elegíveis para OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pedidosOtif"":" & (VAR NumeroJSON = [Pedidos OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregasAtrasadas"":" & (VAR NumeroJSON = [Entregas atrasadas] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}",
+    ",", [Total de pedidos], DESC, dTransportadora[Transportadora], ASC
+) & "]") &
+    ",""regioes"":" & ("[" & CONCATENATEX(
+    FILTER(SUMMARIZE(fPedidos, dDestino[Regiao_Destino]), NOT ISBLANK(dDestino[Regiao_Destino])),
+    "{""nome"":" & (VAR TextoJSON = dDestino[Regiao_Destino]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pedidos"":" & (VAR NumeroJSON = [Total de pedidos] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""otifPercentual"":" & (VAR NumeroJSON = [OTIF %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""custoLogistico"":" & (VAR NumeroJSON = [Custo logístico] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""leadTimeMedio"":" & (VAR NumeroJSON = [Lead time médio] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""emissoesCO2"":" & (VAR NumeroJSON = [Emissões de CO₂] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregues"":" & (VAR NumeroJSON = [Pedidos entregues] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""elegiveisOtif"":" & (VAR NumeroJSON = [Pedidos elegíveis para OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pedidosOtif"":" & (VAR NumeroJSON = [Pedidos OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregasAtrasadas"":" & (VAR NumeroJSON = [Entregas atrasadas] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}",
+    ",", [Total de pedidos], DESC, dDestino[Regiao_Destino], ASC
+) & "]") &
+    ",""modais"":" & ("[" & CONCATENATEX(
+    FILTER(SUMMARIZE(fPedidos, dModal[Modal]), NOT ISBLANK(dModal[Modal])),
+    "{""nome"":" & (VAR TextoJSON = dModal[Modal]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pedidos"":" & (VAR NumeroJSON = [Total de pedidos] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""otifPercentual"":" & (VAR NumeroJSON = [OTIF %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""custoLogistico"":" & (VAR NumeroJSON = [Custo logístico] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""leadTimeMedio"":" & (VAR NumeroJSON = [Lead time médio] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""emissoesCO2"":" & (VAR NumeroJSON = [Emissões de CO₂] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregues"":" & (VAR NumeroJSON = [Pedidos entregues] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""elegiveisOtif"":" & (VAR NumeroJSON = [Pedidos elegíveis para OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pedidosOtif"":" & (VAR NumeroJSON = [Pedidos OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregasAtrasadas"":" & (VAR NumeroJSON = [Entregas atrasadas] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}",
+    ",", [Total de pedidos], DESC, dModal[Modal], ASC
+) & "]") &
+    ",""categorias"":" & ("[" & CONCATENATEX(
+    FILTER(SUMMARIZE(fPedidos, dProduto[Categoria_Produto]), NOT ISBLANK(dProduto[Categoria_Produto])),
+    "{""nome"":" & (VAR TextoJSON = dProduto[Categoria_Produto]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pedidos"":" & (VAR NumeroJSON = [Total de pedidos] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""otifPercentual"":" & (VAR NumeroJSON = [OTIF %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""custoLogistico"":" & (VAR NumeroJSON = [Custo logístico] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""leadTimeMedio"":" & (VAR NumeroJSON = [Lead time médio] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""emissoesCO2"":" & (VAR NumeroJSON = [Emissões de CO₂] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregues"":" & (VAR NumeroJSON = [Pedidos entregues] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""elegiveisOtif"":" & (VAR NumeroJSON = [Pedidos elegíveis para OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pedidosOtif"":" & (VAR NumeroJSON = [Pedidos OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregasAtrasadas"":" & (VAR NumeroJSON = [Entregas atrasadas] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}",
+    ",", [Total de pedidos], DESC, dProduto[Categoria_Produto], ASC
+) & "]") &
+    ",""produtos"":" & ("[" & CONCATENATEX(
+    FILTER(SUMMARIZE(fPedidos, dProduto[Produto]), NOT ISBLANK(dProduto[Produto])),
+    "{""nome"":" & (VAR TextoJSON = dProduto[Produto]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pedidos"":" & (VAR NumeroJSON = [Total de pedidos] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""otifPercentual"":" & (VAR NumeroJSON = [OTIF %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""custoLogistico"":" & (VAR NumeroJSON = [Custo logístico] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""leadTimeMedio"":" & (VAR NumeroJSON = [Lead time médio] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""emissoesCO2"":" & (VAR NumeroJSON = [Emissões de CO₂] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregues"":" & (VAR NumeroJSON = [Pedidos entregues] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""elegiveisOtif"":" & (VAR NumeroJSON = [Pedidos elegíveis para OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pedidosOtif"":" & (VAR NumeroJSON = [Pedidos OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregasAtrasadas"":" & (VAR NumeroJSON = [Entregas atrasadas] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}",
+    ",", [Total de pedidos], DESC, dProduto[Produto], ASC
+) & "]") &
+    ",""motivosAtraso"":" & ("[" & CONCATENATEX(
+    FILTER(SUMMARIZE(fPedidos, fPedidos[Motivo_Atraso]), NOT ISBLANK(fPedidos[Motivo_Atraso])),
+    "{""nome"":" & (VAR TextoJSON = fPedidos[Motivo_Atraso]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pedidos"":" & (VAR NumeroJSON = [Total de pedidos] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""otifPercentual"":" & (VAR NumeroJSON = [OTIF %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""custoLogistico"":" & (VAR NumeroJSON = [Custo logístico] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""leadTimeMedio"":" & (VAR NumeroJSON = [Lead time médio] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""emissoesCO2"":" & (VAR NumeroJSON = [Emissões de CO₂] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregues"":" & (VAR NumeroJSON = [Pedidos entregues] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""elegiveisOtif"":" & (VAR NumeroJSON = [Pedidos elegíveis para OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pedidosOtif"":" & (VAR NumeroJSON = [Pedidos OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregasAtrasadas"":" & (VAR NumeroJSON = [Entregas atrasadas] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}",
+    ",", [Total de pedidos], DESC, fPedidos[Motivo_Atraso], ASC
+) & "]") &
+    ",""statusEntrega"":" & ("[" & CONCATENATEX(
+    FILTER(SUMMARIZE(fPedidos, dStatus[Status_Entrega]), NOT ISBLANK(dStatus[Status_Entrega])),
+    "{""nome"":" & (VAR TextoJSON = dStatus[Status_Entrega]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pedidos"":" & (VAR NumeroJSON = [Total de pedidos] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""otifPercentual"":" & (VAR NumeroJSON = [OTIF %] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""custoLogistico"":" & (VAR NumeroJSON = [Custo logístico] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""leadTimeMedio"":" & (VAR NumeroJSON = [Lead time médio] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""emissoesCO2"":" & (VAR NumeroJSON = [Emissões de CO₂] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregues"":" & (VAR NumeroJSON = [Pedidos entregues] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""elegiveisOtif"":" & (VAR NumeroJSON = [Pedidos elegíveis para OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pedidosOtif"":" & (VAR NumeroJSON = [Pedidos OTIF] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""entregasAtrasadas"":" & (VAR NumeroJSON = [Entregas atrasadas] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}",
+    ",", [Total de pedidos], DESC, dStatus[Status_Entrega], ASC
+) & "]") &
+    "}" &
+    ",""baseInterativa"":" & ("[" & CONCATENATEX(
+    GruposAtuais,
+    "{""m"":" & (VAR TextoJSON = dCalendario[AnoMes]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""r"":" & (VAR TextoJSON = dDestino[Regiao_Destino]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""t"":" & (VAR TextoJSON = dTransportadora[Transportadora]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""d"":" & (VAR NumeroJSON = DAY(fPedidos[Data_Pedido]) RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""o"":" & (VAR TextoJSON = dModal[Modal]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""c"":" & (VAR TextoJSON = dProduto[Categoria_Produto]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pr"":" & (VAR TextoJSON = dProduto[Produto]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""ma"":" & (VAR TextoJSON = fPedidos[Motivo_Atraso]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""s"":" & (VAR TextoJSON = dStatus[Status_Entrega]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""qt"":" & (VAR NumeroJSON = [@qt] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""p"":" & (VAR NumeroJSON = [@p] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""q"":" & (VAR NumeroJSON = [@q] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pe"":" & (VAR NumeroJSON = [@pe] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""vp"":" & (VAR NumeroJSON = [@vp] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""cp"":" & (VAR NumeroJSON = [@cp] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""ln"":" & (VAR NumeroJSON = [@ln] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""co"":" & (VAR NumeroJSON = [@co] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""an"":" & (VAR NumeroJSON = [@an] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""dv"":" & (VAR NumeroJSON = [@dv] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""av"":" & (VAR NumeroJSON = [@av] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""ex"":" & (VAR NumeroJSON = [@ex] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""en"":" & (VAR NumeroJSON = [@en] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pa"":" & (VAR NumeroJSON = [@pa] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""ea"":" & (VAR NumeroJSON = [@ea] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""ai"":" & (VAR NumeroJSON = [@ai] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""nn"":" & (VAR NumeroJSON = [@nn] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""lt"":" & (VAR NumeroJSON = [@lt] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""at"":" & (VAR NumeroJSON = [@at] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""ns"":" & (VAR NumeroJSON = [@ns] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}",
+    ",", dCalendario[AnoMes], ASC, dDestino[Regiao_Destino], ASC, dTransportadora[Transportadora], ASC, fPedidos[Data_Pedido], ASC, dModal[Modal], ASC, dProduto[Categoria_Produto], ASC, dProduto[Produto], ASC, fPedidos[Motivo_Atraso], ASC, dStatus[Status_Entrega], ASC
+) & "]") &
+    ",""baseComparacao"":" & ("[" & CONCATENATEX(
+    GruposComparacao,
+    "{""m"":" & (VAR TextoJSON = dCalendario[AnoMes]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""r"":" & (VAR TextoJSON = dDestino[Regiao_Destino]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""t"":" & (VAR TextoJSON = dTransportadora[Transportadora]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""d"":" & (VAR NumeroJSON = DAY(fPedidos[Data_Pedido]) RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""o"":" & (VAR TextoJSON = dModal[Modal]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""c"":" & (VAR TextoJSON = dProduto[Categoria_Produto]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""pr"":" & (VAR TextoJSON = dProduto[Produto]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""ma"":" & (VAR TextoJSON = fPedidos[Motivo_Atraso]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""s"":" & (VAR TextoJSON = dStatus[Status_Entrega]
+ RETURN IF(ISBLANK(TextoJSON), "null",
+    UNICHAR(34) & CONCATENATEX(
+        GENERATESERIES(1, LEN(TextoJSON)),
+        VAR Caractere = MID(TextoJSON, [Value], 1)
+        VAR Codigo = UNICODE(Caractere)
+        RETURN SWITCH(TRUE(),
+            Codigo = 34, "\""",
+            Codigo = 92, "\\",
+            Codigo = 47, "\/",
+            Codigo < 32, "\u00" & MID("0123456789abcdef", INT(Codigo / 16) + 1, 1) & MID("0123456789abcdef", MOD(Codigo, 16) + 1, 1),
+            Caractere),
+        "", [Value], ASC
+    ) & UNICHAR(34))) &
+    ",""qt"":" & (VAR NumeroJSON = [@qt] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""p"":" & (VAR NumeroJSON = [@p] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""q"":" & (VAR NumeroJSON = [@q] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pe"":" & (VAR NumeroJSON = [@pe] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""vp"":" & (VAR NumeroJSON = [@vp] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""cp"":" & (VAR NumeroJSON = [@cp] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""ln"":" & (VAR NumeroJSON = [@ln] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""co"":" & (VAR NumeroJSON = [@co] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""an"":" & (VAR NumeroJSON = [@an] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""dv"":" & (VAR NumeroJSON = [@dv] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""av"":" & (VAR NumeroJSON = [@av] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""ex"":" & (VAR NumeroJSON = [@ex] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""en"":" & (VAR NumeroJSON = [@en] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""pa"":" & (VAR NumeroJSON = [@pa] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""ea"":" & (VAR NumeroJSON = [@ea] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""ai"":" & (VAR NumeroJSON = [@ai] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""nn"":" & (VAR NumeroJSON = [@nn] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""lt"":" & (VAR NumeroJSON = [@lt] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""at"":" & (VAR NumeroJSON = [@at] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    ",""ns"":" & (VAR NumeroJSON = [@ns] RETURN IF(ISBLANK(NumeroJSON), "null", FORMAT(NumeroJSON, IF(NumeroJSON = TRUNC(NumeroJSON), "0", "0.0###############"), "en-US"))) &
+    "}",
+    ",", dCalendario[AnoMes], ASC, dDestino[Regiao_Destino], ASC, dTransportadora[Transportadora], ASC, fPedidos[Data_Pedido], ASC, dModal[Modal], ASC, dProduto[Categoria_Produto], ASC, dProduto[Produto], ASC, fPedidos[Motivo_Atraso], ASC, dStatus[Status_Entrega], ASC
+) & "]") &
+    "}"

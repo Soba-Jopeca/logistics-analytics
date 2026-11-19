@@ -1,0 +1,201 @@
+HTML Operacao Logistica =
+VAR Gold = [JSON Gold Operacao Logistica]
+VAR Payload = SUBSTITUTE(Gold, "<", "\u003c")
+RETURN
+    "<style>.op-root {
+  --op-bg:#edf2f6; --op-paper:#fff; --op-soft:#f5f8fb; --op-ink:#142638; --op-muted:#4c6175; --op-border:#d8e1e9;
+  --op-head:#112c42; --op-on-head:#f3f9ff; --op-head-muted:#bbd1e2; --op-accent:#006d64; --op-accent-soft:#e3f4ee;
+  --op-delay:#a1283d; --op-delay-soft:#fff0f2; --op-track:#dce6ed;
+  --op-font:""Inter"",""Segoe UI"",sans-serif; --op-xs:.81rem; --op-sm:.91rem; --op-gap:12px; --op-pad:16px;
+  --op-radius:13px; --op-round:7px; --op-space:clamp(10px,2vw,24px);
+  container: op-layout / inline-size; box-sizing:border-box; padding:var(--op-space);
+  background:var(--op-bg); color:var(--op-ink); font:400 1rem/1.4 var(--op-font); text-align:left;
+}
+.op-root *, .op-root *::before, .op-root *::after { box-sizing:border-box; }
+.op-root [hidden] { display:none !important; }
+.op-root h1,.op-root h2,.op-root p { margin:0; }
+.op-root :focus-visible { outline:2px solid var(--op-accent); outline-offset:2px; }
+.op-head { display:flex; justify-content:space-between; flex-wrap:wrap; gap:var(--op-gap); align-items:center; padding:var(--op-pad); border-radius:var(--op-radius); background:var(--op-head); color:var(--op-on-head); }
+.op-head h1 { font-size:clamp(1.65rem,3vw,2.5rem); line-height:1.15; letter-spacing:-.04em; }
+.op-head p,.op-source { color:var(--op-head-muted); font-size:var(--op-xs); margin-top:4px; }
+.op-source { display:grid; text-align:right; }
+.op-root main { display:grid; gap:var(--op-gap); margin-top:var(--op-gap); }
+.op-filters,.op-panel,.op-card,.op-state { min-width:0; background:var(--op-paper); border:1px solid var(--op-border); border-radius:var(--op-radius); padding:var(--op-pad); }
+.op-filters { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)) auto; align-items:end; gap:var(--op-gap); }
+.op-root label { min-width:0; display:grid; gap:4px; color:var(--op-muted); font-size:var(--op-xs); font-weight:650; }
+.op-root select,.op-root button { min-width:0; min-height:36px; padding:6px 9px; border:1px solid var(--op-border); border-" &
+    "radius:var(--op-round); color:var(--op-ink); background:var(--op-soft); font:500 var(--op-sm) var(--op-font); }
+.op-root button { cursor:pointer; }
+.op-root button:disabled { opacity:.6; cursor:default; }
+.op-kpis { display:grid; gap:var(--op-gap); grid-template-columns:repeat(3,minmax(0,1fr)); }
+.op-card { display:grid; gap:3px; }
+.op-card[data-priority] { background:var(--op-delay-soft); border-top:3px solid var(--op-delay); }
+.op-card-label,.op-card p,.op-panel p,.op-panel-head > span,.op-state,.op-rank-empty { color:var(--op-muted); font-size:var(--op-xs); }
+.op-card strong { font-size:clamp(1.35rem,2.5vw,2rem); font-variant-numeric:tabular-nums; }
+.op-panel-head { display:flex; flex-wrap:wrap; align-items:end; justify-content:space-between; gap:var(--op-gap); margin-bottom:var(--op-gap); }
+.op-panel h2 { font-size:1.05rem; font-weight:720; }
+.op-rank { display:grid; gap:8px; }
+.op-rank-label { display:flex; justify-content:space-between; gap:var(--op-gap); font-size:var(--op-xs); }
+.op-rank-bar { display:block; height:6px; border-radius:var(--op-round); background:var(--op-track); margin-top:3px; overflow:hidden; }
+.op-rank-fill { display:block; height:100%; border-radius:inherit; background:var(--op-delay); }
+.op-table-wrap { overflow-x:auto; max-width:100%; }
+.op-root table { width:100%; border-collapse:collapse; font-size:var(--op-xs); }
+.op-root th,.op-root td { text-align:left; padding:8px; border-bottom:1px solid var(--op-border); }
+.op-root thead th,.op-root tbody tr:nth-child(even) { background:var(--op-soft); }
+.op-root th:first-child,.op-root td:nth-child(5) { white-space:nowrap; }
+.op-status { white-space:nowrap; color:var(--op-accent); background:var(--op-accent-soft); border-radius:999px; padding:2px 6px; font-weight:670; }
+.op-status[data-status=""Atrasado""] { color:var(--op-delay); background:var(--op-delay-soft); }
+.op-state { margin-top:var(--op-gap); }
+@container op-layout (max-width:640px) {
+  .op-source { text-align:left; }
+  .op-filters { gr" &
+    "id-template-columns:repeat(2,minmax(0,1fr)); }
+}
+@container op-layout (max-width:350px) {
+  .op-card,.op-filters,.op-panel { padding:10px; }
+}
+
+.op-table-wrap { max-height: min(410px, 55vh); overflow:auto; }
+.op-root thead th { position:sticky; top:0; z-index:1; }
+
+</style><div class=""op-root"" lang=""pt-BR"">
+<header class=""op-head"">
+  <div><h1>Operação logística</h1><p>Carteira ativa na posição registrada da base</p></div>
+  <div class=""op-source""><span data-op-reference></span><span>Base simulada · TabelaBaseLogistica</span></div>
+</header>
+<p class=""op-state"" role=""status"" data-op-state>Carregando a carteira…</p>
+<main data-op-body hidden>
+  <div class=""op-filters"" data-hc-suppress=""all"" aria-label=""Filtros operacionais"">
+    <label>Status<select data-op-filter=""s""></select></label>
+    <label>Transportadora<select data-op-filter=""t""></select></label>
+    <label>Região<select data-op-filter=""r""></select></label>
+    <button type=""button"" data-op-clear>Limpar filtros</button>
+  </div>
+  <section class=""op-kpis"" data-op-kpis aria-label=""Carteira ativa""></section>
+  <section class=""op-panel"">
+    <div class=""op-panel-head""><div><h2>Onde se concentram os atrasos?</h2><p>Pedidos com status Atrasado no recorte</p></div>
+      <label>Detalhar por<select data-op-group><option value=""t"">Transportadora</option><option value=""r"">Região</option><option value=""mot"">Motivo registrado</option></select></label>
+    </div>
+    <div class=""op-rank"" data-op-rank></div>
+  </section>
+  <section class=""op-panel"">
+    <div class=""op-panel-head""><div><h2>Fila de pedidos</h2><p>Atrasados primeiro. Dentro de cada status, a previsão mais antiga aparece no topo.</p></div><span data-op-count></span></div>
+    <div class=""op-table-wrap"" tabindex=""0"" aria-label=""Fila de pedidos com rolagem em telas estreitas"">
+      <table><thead><tr><th scope=""col"">Pedido</th><th scope=""col"">Status</th><th scope=""col"">Transportadora</th><th scope=""col"">Destino</th><th scope=""col"">Entrega prevista</th><th scope=" &
+    """col"">Motivo registrado</th></tr></thead><tbody data-op-queue></tbody></table>
+    </div>
+  </section>
+</main>
+<script type=""application/json"" class=""op-data"">" & Payload &
+    "</script>
+<script>(() => {
+  'use strict';
+  const root = document.currentScript?.closest('.op-root') ||
+    [...document.querySelectorAll('.op-root:not([data-op-ready])')].at(-1);
+  if (!root || root.hasAttribute('data-op-ready')) return;
+  root.setAttribute('data-op-ready', '');
+  const find = key => root.querySelector('[data-op-' + key + ']');
+  const state = find('state');
+  const body = find('body');
+  const add = (tag, css, text) => {
+    const element = document.createElement(tag);
+    if (css) element.className = css;
+    if (text != null) element.textContent = text;
+    return element;
+  };
+  try {
+    const { referencia, pedidos } = JSON.parse(root.querySelector('.op-data').textContent);
+    if (!Array.isArray(pedidos)) throw new Error('Fila operacional ausente');
+    const number = new Intl.NumberFormat('pt-BR');
+    const percent = new Intl.NumberFormat('pt-BR',{style:'percent',maximumFractionDigits:0});
+    const collator = new Intl.Collator('pt-BR');
+    const date = value => value ? value.split('-').reverse().join('/') : '—';
+    const isLate = row => row.s === 'Atrasado';
+    const sort = (a,b) => Number(isLate(b))-Number(isLate(a)) ||
+      (a.pre || '9999-12-31').localeCompare(b.pre || '9999-12-31') || collator.compare(a.id,b.id);
+    const noValue = 'Sem informação';
+    find('reference').textContent = referencia ? 'Posição da base · ' + date(referencia) : 'Data de referência indisponível';
+    if (!pedidos.length) {
+      state.textContent = 'Nenhum pedido atrasado ou em trânsito no recorte do Power BI.';
+      return;
+    }
+    const filters = [...root.querySelectorAll('[data-op-filter]')];
+    const groupBy = find('group');
+    const clear = find('clear');
+    for (const control of filters) {
+      const key = control.dataset.opFilter;
+      const options = [...new Set(pedidos.map(row => row[key]).filter(Boolean))].sort(collator.compare);
+      control.append(new Option('Todos', ''), ...options.map(value => new Option(value,value)));
+      cont" &
+    "rol.addEventListener('change',render);
+    }
+    clear.addEventListener('click',() => {
+      for (const control of filters) control.value = '';
+      render();
+    });
+    groupBy.addEventListener('change',render);
+    function render() {
+      body.hidden = false;
+      const active = filters.filter(control => control.value);
+      const rows = pedidos.filter(row => active.every(control => row[control.dataset.opFilter] === control.value));
+      const delayed = rows.filter(isLate);
+      clear.disabled = !active.length;
+      state.hidden = Boolean(rows.length);
+      if (!rows.length) state.textContent = 'Nenhum pedido corresponde a essa combinação de filtros.';
+      const specs = [
+        ['Em aberto', rows.length, 'Status Atrasado ou Em trânsito'],
+        ['Atrasados', delayed.length, 'Status registrado na fonte'],
+        ['Em trânsito', rows.filter(row=>row.s === 'Em trânsito').length, 'Status registrado na fonte']
+      ];
+      find('kpis').replaceChildren(...specs.map(([label,value,detail])=>{
+        const card = add('article','op-card');
+        if (label === 'Atrasados') card.dataset.priority = '';
+        const amount = add('strong','',number.format(value));
+        amount.dataset.total = value;
+        card.append(add('span','op-card-label',label),amount,add('p','',detail));
+        return card;
+      }));
+      const totals = new Map();
+      const grouping = groupBy.value;
+      for (const row of delayed) {
+        const label = row[grouping] || (grouping === 'mot' ? 'Sem motivo informado' : noValue);
+        totals.set(label,(totals.get(label) || 0)+1);
+      }
+      const ranked = [...totals].sort((a,b)=>b[1]-a[1] || collator.compare(a[0],b[0]));
+      const top = ranked.slice(0,5);
+      const rest = ranked.slice(5).reduce((n,row)=>n+row[1],0);
+      if (rest) top.push(['Demais',rest]);
+      find('rank').replaceChildren(...(top.length ? top.map(([name,count])=>{
+        const line = add('div'), label = add('div','op-rank-label');
+        labe" &
+    "l.append(add('span','',name),add('strong','',number.format(count)+' · '+percent.format(count/delayed.length)));
+        const track = add('span','op-rank-bar'), fill = add('span','op-rank-fill');
+        fill.style.width = count/delayed.length*100+'%';
+        track.setAttribute('aria-hidden','true');
+        track.append(fill);
+        line.append(label,track);
+        return line;
+      }) : [add('p','op-rank-empty','Sem pedidos com status Atrasado neste recorte.')]));
+      find('count').textContent = number.format(rows.length) + (rows.length === 1 ? ' pedido' : ' pedidos');
+      find('queue').replaceChildren(...rows.sort(sort).map(row=>{
+        const line = add('tr'), id = add('th','',row.id), status = add('td'), pill = add('span','op-status',row.s);
+        id.scope = 'row';
+        pill.dataset.status = row.s;
+        status.append(pill);
+        line.append(id,status,...[
+          row.t || '—',[row.cid,row.uf].filter(Boolean).join(' · ') || '—',date(row.pre),row.mot || '—'
+        ].map(value=>add('td','',value)));
+        return line;
+      }));
+    }
+    render();
+  } catch(error) {
+    body.hidden = true;
+    state.hidden = false;
+    state.textContent = 'Não foi possível carregar a fila de pedidos.';
+    console.error('Operação Logística',error);
+  }
+})();
+</script>
+</div>
+"

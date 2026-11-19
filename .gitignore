@@ -2,6 +2,7 @@
 *.pbix
 *.pbit
 *.xlsx
+!docs/base/base_logistica_simulada_brasil.xlsx
 .env
 .env.*
 config.toml

@@ -1,0 +1,2 @@
+Entregas com atraso informado =
+COALESCE(CALCULATE([Total de pedidos], KEEPFILTERS(NOT ISBLANK(fPedidos[Data_Entrega])), KEEPFILTERS(NOT ISBLANK(fPedidos[Dias_Atraso]))),0)

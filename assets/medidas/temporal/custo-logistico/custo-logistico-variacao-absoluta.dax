@@ -1,0 +1,2 @@
+Custo logístico variação absoluta =
+IF(NOT ISBLANK([Custo logístico]) && NOT ISBLANK([Custo logístico mês anterior]), [Custo logístico] - [Custo logístico mês anterior])

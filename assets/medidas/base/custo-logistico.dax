@@ -1,0 +1,2 @@
+Custo logístico =
+SUM(fPedidos[Custo_Logistico_Total_R$])

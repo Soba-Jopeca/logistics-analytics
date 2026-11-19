@@ -1,67 +1,105 @@
-# Conectar o OpenAI Codex ao Power BI Desktop via MCP
+# Conectar o Codex ao Power BI Desktop no Windows
 
-[Voltar ao README](../README.md)
+[Voltar ao README](../README.md) · [Skills e prompts](prompts-e-skills.md)
 
-## Quem faz o quê
+Este guia reproduz o caminho usado neste projeto. O **Power BI Authoring MCP**, da Microsoft, foi instalado pelo Visual Studio Code. Seu executável local foi registrado no **Codex** para consultar o modelo aberto no **Power BI Desktop**. O primeiro cadastro usa somente leitura. A autorização para editar o modelo é uma etapa separada.
 
-O **Codex** interpreta o objetivo, chama ferramentas e verifica a saída. O **Power BI Authoring MCP** é o servidor da Microsoft que expõe operações sobre o modelo semântico. O **Power BI Desktop** hospeda o modelo local. As **skills** descrevem o método que o agente segue. Prompts definem a tarefa, o escopo e os critérios de aceitação daquela execução.
+## 1. Instalar o Codex e preparar o Power BI
 
-Neste projeto, o servidor já estava instalado pela extensão de Power BI no VS Code. O Codex iniciou o executável local com transporte **stdio** e se conectou ao modelo Desktop em `localhost`. O caminho abaixo por instalação npm é uma alternativa documentada para reproduzir a conexão. [Servidor oficial da Microsoft](https://github.com/microsoft/powerbi-modeling-mcp)
+1. Baixe e instale o **aplicativo oficial da OpenAI** para Windows. Na distribuição atual, a experiência Codex está disponível dentro do aplicativo ChatGPT para desktop. Entre com a sua conta e selecione **Codex**. [Download oficial](https://openai.com/codex/) · [Aplicativo de desktop](https://help.openai.com/en/articles/20001276-moving-to-the-new-chatgpt-desktop-app)
+2. Tenha **Visual Studio Code** e **Power BI Desktop** instalados. Abra o PBIX de trabalho no Power BI Desktop, no mesmo Windows em que o Codex e o servidor MCP serão executados.
 
-## Pré-requisitos
+## 2. Instalar o Power BI Authoring MCP pelo VS Code
 
-- Windows com Power BI Desktop e o arquivo de trabalho aberto na mesma máquina que executa o servidor local.
-- Codex com suporte a servidores MCP locais. Para a instalação por npm, ter Node.js e `npx` disponíveis no terminal.
-- Acesso autorizado ao arquivo e ao modelo. Para escrita, usar uma cópia de trabalho e conferir a conexão em modo somente leitura primeiro.
+1. Abra **Extensões** no VS Code com `Ctrl+Shift+X`.
+2. Procure por **Power BI Authoring MCP Server**. Confira o ID `analysis-services.powerbi-modeling-mcp` e instale a extensão oficial. [Extensão no Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=analysis-services.powerbi-modeling-mcp)
+3. No Explorador de Arquivos do Windows, digite `%USERPROFILE%\.vscode\extensions` na barra de endereço. Localize a pasta que começa com `analysis-services.powerbi-modeling-mcp-` e abra a subpasta `server`.
+4. Localize o arquivo **`powerbi-modeling-mcp.exe`** e use **Copiar como caminho**. O executável é iniciado pelo Codex quando o servidor é usado. A extensão serve para instalar o binário e pode ficar fechada durante o trabalho no Codex.
 
-## 1. Registrar o servidor no Codex
-
-Adicione o bloco abaixo ao arquivo de configuração do usuário, normalmente `%USERPROFILE%\.codex\config.toml` no Windows. Preserve as configurações existentes. `cmd.exe` permite chamar o launcher do npm no Windows.
-
-```toml
-[mcp_servers.powerbi_local]
-command = "cmd.exe"
-args = ["/c", "npx", "-y", "@microsoft/powerbi-modeling-mcp", "--start", "--readonly"]
-startup_timeout_sec = 60
-tool_timeout_sec = 120
-```
-
-A primeira ativação pode exigir aceite dos termos do servidor. Leia a licença e faça o aceite pelo fluxo disponível no cliente. Em execução sem interação, o servidor documenta `--accept-eula` ou `PBI_MODELING_MCP_ACCEPT_EULA=true`. Use esses parâmetros somente após o aceite explícito. [Licença do servidor](https://go.microsoft.com/fwlink/?LinkId=2381247) · [Opções de inicialização](https://github.com/microsoft/powerbi-modeling-mcp)
-
-A instalação pela extensão do VS Code também inclui o executável. Nesse caso, substitua `command` pelo caminho do executável e use `args = ["--start", "--readonly"]`. O caminho real depende da instalação. A extensão fornece o binário. A configuração MCP do Codex é feita separadamente.
-
-```powershell
-codex mcp list
-```
-
-O comando confirma o cadastro do servidor. A prova da conexão acontece quando o agente consegue listar as tabelas do modelo aberto. Abra uma nova sessão após alterar a configuração, se necessário. [Configuração de MCP no Codex](https://developers.openai.com/codex/mcp)
-
-## 2. Confirmar o modelo com uma consulta somente leitura
+A versão encontrada neste projeto foi **1.0.1 para Windows x64**. Use a pasta que realmente aparece no seu computador.
 
 ```text
-Use o servidor powerbi_local. Liste as instâncias do Power BI Desktop.
-Conecte ao projeto Logistics Analytics. Confirme o nome do modelo e liste
-tabelas, colunas e relacionamentos. Execute uma consulta DAX para contar
-as linhas de fPedidos e os IDs de pedido distintos. Faça apenas leitura.
+C:\Users\SEU_USUARIO\.vscode\extensions\analysis-services.powerbi-modeling-mcp-1.0.1-win32-x64\server\powerbi-modeling-mcp.exe
 ```
 
-O fluxo normalmente usa `connection_operations` com `ListLocalInstances` e `ConnectToPowerBIDesktop`, seguido das ferramentas de tabelas, medidas, relacionamentos e consultas DAX. Se a descoberta não funcionar, identifique o endpoint local aberto e use uma conexão explícita no formato `Data Source=localhost:<porta-da-sessão>`. A porta muda entre sessões. Se o sandbox bloquear acesso ao processo local, trate a restrição pelo mecanismo de permissões do cliente. [Conexão com o Desktop](https://learn.microsoft.com/en-us/power-bi/developer/mcp/power-bi-authoring-mcp)
+## 3. Registrar o executável nas configurações do Codex
 
-## 3. Autorizar a autoria em uma cópia de trabalho
+No aplicativo de desktop, abra **Configurações → MCP servers → Add server** (os rótulos dependem do idioma). Use **STDIO** e preencha os campos abaixo. [Configuração MCP no aplicativo desktop](https://learn.chatgpt.com/docs/extend/mcp?surface=desktop#configure-in-the-chatgpt-desktop-app)
 
-Troque `--readonly` por `--readwrite` depois de conferir o modelo e autorizar a edição. Separe as mudanças em lotes e reconcilie a saída com consultas antes e depois. Antes de alterar uma medida existente, copie sua expressão para um backup oculto com nome único. Backups feitos no modelo em memória dependem do salvamento da cópia de trabalho para persistir ao fechar o Desktop.
+| Campo | Preenchimento |
+| --- | --- |
+| Nome | `powerbi-authoring-local` |
+| Transporte | `STDIO` |
+| Comando | Caminho completo de `powerbi-modeling-mcp.exe` copiado no Explorador |
+| Argumento 1 | `--start` |
+| Argumento 2 | `--readonly` |
 
-Neste caso, o MCP foi usado para alterar o modelo e as medidas. A instalação utilizada não expôs as operações de canvas necessárias para montar os visuais. A inserção do visual personalizado e a vinculação das medidas foram feitas no Power BI. As capacidades podem variar entre versões e superfícies.
+**No campo Comando, use só uma barra invertida `\` por separador**, como no exemplo acima. Remova as aspas externas se o Explorador as incluiu. Insira os argumentos em entradas separadas. Salve o servidor e selecione **Restart**. No compositor, digite `/mcp` para conferir se ele aparece. [Configuração oficial do Codex](https://developers.openai.com/codex/mcp)
+
+<details>
+<summary>Equivalente para editar o config.toml manualmente</summary>
+
+A configuração local do Codex costuma ficar em `%USERPROFILE%\.codex\config.toml`. Use este bloco como alternativa à interface. Aspas simples no TOML preservam as barras invertidas literalmente.
+
+```toml
+[mcp_servers.powerbi-authoring-local]
+command = 'C:\Users\SEU_USUARIO\.vscode\extensions\analysis-services.powerbi-modeling-mcp-1.0.1-win32-x64\server\powerbi-modeling-mcp.exe'
+args = ["--start", "--readonly"]
+```
+
+Em **JSON**, uma barra literal é escrita como `\\` porque o formato faz escape. Isso continua representando uma única barra no caminho real. O trecho abaixo explica a diferença ao ler um cadastro JSON. A interface do Codex recebe somente o caminho puro, e o formato nativo de configuração do Codex é TOML.
+
+```json
+{
+  "powerbi-authoring-local": {
+    "command": "C:\\Users\\SEU_USUARIO\\.vscode\\extensions\\analysis-services.powerbi-modeling-mcp-1.0.1-win32-x64\\server\\powerbi-modeling-mcp.exe",
+    "args": [
+      "--start",
+      "--readonly"
+    ]
+  }
+}
+```
+
+</details>
+
+## 4. Autorizar a licença e testar a conexão
+
+Leia os termos do servidor e conclua o aceite se o cliente solicitar. A execução sem interação aceita `--accept-eula` após o consentimento. Neste projeto, o aceite foi solicitado antes de habilitar o acesso ao servidor. [Termos da Microsoft](https://go.microsoft.com/fwlink/?LinkId=2381247) · [Opções do executável](https://github.com/microsoft/powerbi-modeling-mcp#%EF%B8%8F-settings)
+
+Com o relatório aberto, rode o [prompt de diagnóstico inicial](prompts/01-diagnostico-e-modelo.md) ou comece por este teste:
+
+```text
+Use o servidor powerbi-authoring-local. Liste as instâncias do Power BI Desktop,
+conecte ao relatório aberto e confirme seu nome. Liste as tabelas e medidas.
+Execute uma consulta DAX para contar as linhas de fPedidos e os IDs distintos.
+Faça apenas leitura.
+```
+
+A validação é bem-sucedida quando o agente lista objetos do modelo correto e executa uma consulta DAX. No caso documentado, a descoberta automática falhou dentro do sandbox. A conexão ocorreu pelo MCP local usando o endpoint da sessão no formato `Data Source=localhost:<porta-da-sessão>`, após a autorização de acesso ao processo local. A porta é dinâmica. [Conexão local do Power BI Authoring MCP](https://learn.microsoft.com/en-us/power-bi/developer/mcp/power-bi-authoring-mcp#connect-to-a-semantic-model)
+
+## 5. Criar ou reutilizar as skills
+
+Depois de validar a conexão, abra o seletor de skills no Codex e use o **Skill Creator**, a ferramenta integrada de criação de skills. Também é possível invocá-lo digitando `$skill-creator`. Descreva a finalidade, quando usar a skill e como validar o resultado. Para reproduzir a metodologia deste projeto, forneça os dois arquivos reais e seus recursos de apoio. [Criação de skills no Codex](https://learn.chatgpt.com/docs/build-skills#create-a-skill)
+
+- [`dax-creation-expert`](skills/dax-creation-expert/SKILL.md) para modelagem e validação DAX.
+- [`dataviz-html-dax`](skills/dataviz-html-dax/SKILL.md) para DataViz, JSON e HTML no Power BI.
+
+Para usar as versões publicadas diretamente, copie a pasta inteira de cada skill de `docs/skills/` para `.agents/skills/` no seu projeto. Inclua `references/` quando existir. Abra o projeto no Codex e escolha a skill no seletor ou invoque pelo nome no prompt. [Locais de descoberta de skills](https://learn.chatgpt.com/docs/build-skills#where-codex-loads-local-skills)
+
+## 6. Liberar a autoria quando o escopo estiver aprovado
+
+Depois de confirmar a instância e os resultados da consulta, use uma cópia de trabalho e troque `--readonly` por `--readwrite` para o período de edição autorizado. Reinicie o servidor. Trabalhe por etapas, compare as consultas antes e depois e faça backup das medidas que serão substituídas. No caso, o MCP trabalhou no modelo em memória. A associação das medidas aos visuais no canvas e a publicação foram feitas no Power BI.
 
 ## Diagnóstico rápido
 
-| Sintoma | Verificação |
+| Sintoma | O que verificar |
 | --- | --- |
-| Servidor não aparece | Confirme instalação, caminho do executável e configuração MCP do Codex. |
-| Mensagem de licença | Revise os termos e conclua o aceite autorizado. |
-| Nenhuma instância encontrada | Verifique se o Desktop está aberto, se o servidor roda no mesmo Windows e se o ambiente permite conexão ao processo local. |
-| Leitura funciona, escrita falha | Confirme modo `--readwrite` e permissão no modelo de destino. |
-| Medida Ready, visual vazio | Confira a função `Values` e a edição do visual. Execute DAX e teste o HTML renderizado no canvas. |
-| Arquivo publicado desatualizado | Compare a versão salva do PBIX com a publicação, a data da fonte e os filtros do serviço. |
+| Servidor não aparece | Confira o nome, transporte STDIO e o caminho do executável. Use Restart após salvar. |
+| Caminho não existe | Confira a pasta da extensão instalada. A versão e a arquitetura podem mudar o nome da pasta. |
+| Falha de licença | Leia os termos e conclua o aceite autorizado no cliente. |
+| Nenhuma instância encontrada | Abra o Power BI Desktop com o relatório carregado e confira o host local e as permissões do cliente. |
+| Consulta funciona, edição falha | Confira o modo `--readonly`, a permissão de gravação e o modelo de destino. |
+| Medida Ready, visual vazio | Confira a edição do visual HTML Content, o campo `Values` e a renderização do JavaScript. |
 
-**Governança.** Um servidor local pode enviar metadados e resultados ao cliente MCP, que pode encaminhar contexto ao provedor de IA configurado. Use dados simulados ou aprovados para esse fluxo. Mantenha credenciais, caminhos pessoais e configurações com segredos fora do Git. [Considerações de privacidade do MCP da Microsoft](https://github.com/microsoft/powerbi-modeling-mcp#data-privacy-and-llm-providers)
+O servidor local usa as permissões do modelo. Metadados e resultados de consulta podem entrar no contexto do cliente e do provedor de IA configurado. Trabalhe com dados simulados ou aprovados, e mantenha credenciais e configurações privadas fora do Git. [Privacidade no MCP da Microsoft](https://github.com/microsoft/powerbi-modeling-mcp#data-privacy-and-llm-providers)

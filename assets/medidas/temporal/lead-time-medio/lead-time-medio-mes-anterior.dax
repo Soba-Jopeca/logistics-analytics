@@ -1,0 +1,2 @@
+Lead time médio mês anterior =
+IF(HASONEVALUE(dCalendario[AnoMes]), CALCULATE([Lead time médio], PREVIOUSMONTH(dCalendario[Data])))

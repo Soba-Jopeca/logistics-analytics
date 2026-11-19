@@ -1,0 +1,2 @@
+Pedidos extraviados =
+COALESCE(CALCULATE([Total de pedidos], KEEPFILTERS(fPedidos[Pedido_Extraviado] = "Sim")),0)

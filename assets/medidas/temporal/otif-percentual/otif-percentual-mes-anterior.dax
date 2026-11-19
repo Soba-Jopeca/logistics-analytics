@@ -1,0 +1,2 @@
+OTIF % mês anterior =
+IF(HASONEVALUE(dCalendario[AnoMes]), CALCULATE([OTIF %], PREVIOUSMONTH(dCalendario[Data])))

@@ -1,0 +1,2 @@
+Custo logístico variação percentual =
+DIVIDE([Custo logístico variação absoluta],[Custo logístico mês anterior])

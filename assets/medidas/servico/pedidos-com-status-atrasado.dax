@@ -1,0 +1,2 @@
+Pedidos com status Atrasado =
+COALESCE(CALCULATE([Total de pedidos], KEEPFILTERS(fPedidos[Status_Entrega] = "Atrasado")),0)

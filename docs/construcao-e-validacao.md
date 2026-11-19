@@ -4,7 +4,9 @@
 
 ## 1. Diagnosticar a fonte e montar o modelo
 
-O arquivo original é `base_logistica_simulada_brasil.xlsx`. A tabela Excel `TabelaBaseLogistica` tem 1.000 registros e 58 colunas. O arquivo também contém dicionário, premissas e guia de análise. Este repositório documenta a implementação e disponibiliza uma amostra mínima para experimentar as regras. O PBIX publicado e a planilha de origem ficam fora do repositório.
+O arquivo original é `base_logistica_simulada_brasil.xlsx`. A tabela Excel `TabelaBaseLogistica` tem 1.000 registros e 58 colunas. O arquivo também contém dicionário, premissas e guia de análise. A [base simulada completa](base/README.md) está disponível para reproduzir o caso. A amostra mínima abaixo permite experimentar as regras com oito registros. A implementação visual pode ser consultada no relatório público.
+
+Use as [consultas M exportadas](../examples/power-query/README.md) para reproduzir o modelo com os mesmos campos. O único ajuste de origem é definir o caminho local da planilha.
 
 1. Leia a tabela com `Excel.Workbook(File.Contents(...), null, true)`. Use um parâmetro local para a origem ao compartilhar o projeto.
 2. Crie `stgLogistica` com tipos explícitos. Trate IDs como texto, datas como data e métricas conforme o tipo da fonte. Preserve as 50 entregas em branco. O diagnóstico confirmou 1.000 chaves distintas e zero duplicidades em `ID_Pedido`.
@@ -23,13 +25,21 @@ O arquivo original é `base_logistica_simulada_brasil.xlsx`. A tabela Excel `Tab
 | `dCanal` | Canal de venda | Origem comercial |
 | `dCalendario` | `Data` | Anos completos, mês, trimestre e ano-mês |
 
+[![Diagrama do modelo estrela, com fatos e dimensões, gerado a partir dos relacionamentos lidos pelo MCP](../assets/modelo-relacionamentos.svg)](../assets/modelo-relacionamentos.svg)
+
+O diagrama foi montado a partir da leitura do modelo via MCP, com cardinalidade, direção e estado de cada relacionamento.
+
 A `dCalendario` foi marcada como tabela de datas. A relação ativa usa `fPedidos[Data_Pedido]`. Aprovação, expedição, previsão, entrega e devolução têm relações inativas. A data de atualização representa a posição da fonte.
 
 **Experimento mínimo.** Crie uma consulta em branco no Power Query e cole [fPedidos-demo.m](../examples/fPedidos-demo.m) no Editor Avançado. Nomeie a tabela `fPedidos` e carregue-a. Execute [kpis-demo.dax](../examples/kpis-demo.dax) na Exibição de consulta DAX. Você deve obter 8 pedidos, 4 elegíveis, 2 OTIF e 3 em carteira. A amostra demonstra o conceito com valores próprios. Para reconstruir todas as páginas, use uma fonte com os campos do modelo e as etapas deste guia.
 
 ## 2. Calcular primeiro com medidas DAX
 
-Organize as medidas em pastas de Base, Serviço, Qualidade, Derivadas e Temporal. Use `DISTINCTCOUNT` para pedidos, `DIVIDE` para taxas e `KEEPFILTERS` em condições que devem cruzar o filtro do relatório. A contagem de elegíveis e a de sucessos ficam separadas.
+As 53 medidas ativas estão no [catálogo de medidas](../assets/medidas/README.md), com as expressões exportadas do modelo aberto. As pastas incluem Base, Serviço, Qualidade, Derivada, Temporal, Gold e Apresentação.
+
+![Organização das medidas por pasta no modelo](../assets/organizacao-medidas.svg)
+
+Use `DISTINCTCOUNT` para pedidos, `DIVIDE` para taxas e `KEEPFILTERS` em condições que devem cruzar o filtro do relatório. A contagem de elegíveis e a de sucessos ficam separadas.
 
 ```dax
 Pedidos OTIF =

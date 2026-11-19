@@ -1,0 +1,2 @@
+OTIF % variação absoluta =
+IF(NOT ISBLANK([OTIF %]) && NOT ISBLANK([OTIF % mês anterior]), [OTIF %] - [OTIF % mês anterior])

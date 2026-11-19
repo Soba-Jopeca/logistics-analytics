@@ -1,0 +1,294 @@
+HTML Capa Logistica =
+VAR Gold = [JSON Gold Dashboard Logistica]
+VAR Payload = SUBSTITUTE(Gold, "<", "\u003c")
+RETURN
+    "<style>.cp-root {
+  --cp-font: ""Inter"", ""Segoe UI"", sans-serif;
+  --cp-bg: #081420; --cp-panel: #112437; --cp-border: #2a4760; --cp-grid: #283e52;
+  --cp-text: #f0f8ff; --cp-muted: #afc5d9; --cp-accent: #69efcf; --cp-up: #81edb7; --cp-down: #ffabb7;
+  --cp-road-size: 34px; --cp-road-edge: #416179; --cp-road-bed: #0a1d2d; --cp-road-stripe: #567488;
+  --cp-road-marker: #6ce7cb; --cp-road-marker-alt: #91caff; --cp-road-headlight: #f4ffff;
+  --cp-s1: 6px; --cp-s2: 12px; --cp-s3: 18px; --cp-s4: 24px; --cp-s5: 36px; --cp-s6: 52px;
+  --cp-radius: 15px; --cp-wrap: 1180px; --cp-space: clamp(16px, 4.4vw, 60px);
+  container: cp-layout / inline-size; isolation: isolate; position: relative;
+  display: grid; grid-template-rows: auto 1fr auto auto; box-sizing: border-box;
+  min-height: 100vh; min-width: 0; padding: var(--cp-space);
+  font: 400 1rem/1.45 var(--cp-font); color: var(--cp-text); background-color: var(--cp-bg);
+  text-align: left; color-scheme: dark;
+}
+.cp-root *, .cp-root *::before, .cp-root *::after { box-sizing: border-box; }
+.cp-root [hidden] { display: none !important; }
+.cp-root h1, .cp-root h2, .cp-root p { margin: 0; }
+.cp-top, .cp-layout, .cp-road, .cp-foot { inline-size: 100%; max-width: var(--cp-wrap); margin-inline: auto; }
+.cp-top { display: flex; flex-wrap: wrap; gap: var(--cp-s2); justify-content: space-between; align-items: center; border-bottom: 1px solid var(--cp-border); padding-bottom: var(--cp-s3); }
+.cp-brand { display: flex; align-items: center; gap: var(--cp-s2); font-size: 1rem; letter-spacing: .035em; }
+.cp-brand i { width: 9px; height: 9px; border-radius: 2px; background: var(--cp-accent); transform: rotate(45deg); }
+.cp-top p { color: var(--cp-muted); font-size: .85rem; }
+.cp-layout { display: grid; grid-template-columns: minmax(0, 1.42fr) minmax(0, 1fr); gap: var(--cp-s5); align-items: center; padding-block: clamp(var(--cp-s4), 6vw, 84px); }
+.cp-intro { min-width: 0; }
+.cp-intro h1 { position: relative; max-width: 14ch; font-size: clamp(2.6" &
+    "5rem, 5.55vw, 5.7rem); line-height: .99; letter-spacing: -.065em; font-weight: 740; overflow-wrap: break-word; }
+.cp-phrase { opacity: 0; }
+.cp-type { position: absolute; inset: 0; }
+.cp-intro p { color: var(--cp-muted); max-width: 43ch; margin-top: var(--cp-s4); font-size: clamp(.95rem, 1.4vw, 1.13rem); }
+.cp-summary { margin-top: var(--cp-s5); display: flex; flex-wrap: wrap; gap: var(--cp-s3) var(--cp-s5); }
+.cp-summary > div { display: grid; gap: var(--cp-s1); border-inline-start: 2px solid var(--cp-accent); padding-inline-start: var(--cp-s2); }
+.cp-summary span, .cp-score p, .cp-trend span, .cp-source, .cp-state { color: var(--cp-muted); font-size: .83rem; }
+.cp-summary strong { font-size: 1.38rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.cp-preview { min-width: 0; padding: clamp(var(--cp-s2), 2vw, var(--cp-s4)); background: var(--cp-panel); border: 1px solid var(--cp-border); border-radius: var(--cp-radius); }
+.cp-score { display: grid; grid-template-columns: minmax(96px, 146px) minmax(0, 1fr); align-items: center; gap: var(--cp-s3); }
+.cp-score h2 { font-size: 1.15rem; line-height: 1.12; }
+.cp-score p { margin-top: var(--cp-s1); }
+.cp-score .cp-change { color: var(--cp-text); margin-top: var(--cp-s2); }
+.cp-change span[data-direction=""up""] { color: var(--cp-up); }
+.cp-change span[data-direction=""down""] { color: var(--cp-down); }
+.cp-ring { position: relative; aspect-ratio: 1; display: grid; place-items: center; }
+.cp-ring svg, .cp-ring-value { grid-area: 1 / 1; }
+.cp-ring svg { width: 100%; }
+.cp-ring-track, .cp-ring-fill { fill: none; stroke-width: 7; }
+.cp-ring-track { stroke: var(--cp-grid); }
+.cp-ring-fill { stroke: var(--cp-accent); stroke-linecap: round; }
+.cp-ring-value { color: var(--cp-accent); font-size: clamp(1.13rem, 2.15vw, 1.83rem); letter-spacing: -.045em; font-weight: 730; font-variant-numeric: tabular-nums; }
+.cp-trend { margin-top: var(--cp-s3); padding-top: var(--cp-s3); border-top: 1px solid var(--cp-border); }
+.cp-trend > d" &
+    "iv:first-child { display: flex; align-items: baseline; flex-wrap: wrap; justify-content: space-between; gap: var(--cp-s1); font-size: .9rem; }
+.cp-trend-plot { min-height: 70px; margin-top: var(--cp-s1); color: var(--cp-muted); font-size: .83rem; display: grid; align-items: center; }
+.cp-trend svg { display: block; width: 100%; height: 70px; }
+.cp-trend-grid { stroke: var(--cp-grid); vector-effect: non-scaling-stroke; }
+.cp-trend-line { fill: none; stroke: var(--cp-accent); stroke-width: 2.3; vector-effect: non-scaling-stroke; stroke-linecap: round; stroke-linejoin: round; }
+.cp-trend-dot { fill: var(--cp-accent); stroke: var(--cp-panel); stroke-width: 1.5; }
+.cp-foot { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--cp-s2); margin-top: var(--cp-s2); }
+.cp-source { display: grid; overflow-wrap: anywhere; padding-block: var(--cp-s1); }
+.cp-slot { block-size: 60px; inline-size: min(230px, 29vw); }
+.cp-screen-reader { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.cp-road { position: relative; isolation: isolate; overflow: hidden; block-size: var(--cp-road-size); border-block: 1px solid var(--cp-road-edge); background: var(--cp-road-bed); pointer-events: none; }
+.cp-road::before { content: """"; position: absolute; inset: 50% 0 auto; border-top: 1px dashed var(--cp-road-stripe); }
+.cp-vehicle { position: absolute; left: var(--cp-from); top: var(--cp-lane, 21%); width: 18px; height: 5px; border-radius: 2px; background: var(--cp-vehicle-color, var(--cp-road-marker)); box-shadow: 0 0 9px var(--cp-vehicle-color, var(--cp-road-marker)); animation: cp-drive var(--cp-trip) linear 3; animation-delay: var(--cp-delay, 0s); }
+.cp-vehicle::after { content: """"; position: absolute; top: 1px; right: 2px; width: 3px; height: 3px; background: var(--cp-road-headlight); border-radius: 1px; }
+.cp-vehicle-a { --cp-from: 11%; --cp-to: 97%; --cp-trip: 8s; }
+.cp-vehicle-b { --cp-from: 83%; --c" &
+    "p-to: 3%; --cp-trip: 10s; --cp-lane: 67%; --cp-delay: -.8s; --cp-vehicle-color: var(--cp-road-marker-alt); }
+.cp-vehicle-c { --cp-from: 44%; --cp-to: 98%; --cp-trip: 6s; --cp-delay: -2s; }
+@keyframes cp-drive { to { left: var(--cp-to); } }
+.cp-road { border-radius: var(--cp-radius); }
+@container cp-layout (max-width: 760px) {
+  .cp-layout { grid-template-columns: minmax(0, 1fr); gap: var(--cp-s3); }
+  .cp-intro h1 { max-width: 17ch; }
+}
+@container cp-layout (max-width: 435px) {
+  .cp-layout { padding-block: var(--cp-s4); }
+  .cp-score { grid-template-columns: 108px minmax(0, 1fr); }
+  .cp-foot { grid-template-columns: minmax(0, 1fr); }
+  .cp-slot { justify-self: end; inline-size: min(210px, 78%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cp-root *, .cp-root *::before, .cp-root *::after { animation: none !important; transition: none !important; }
+}
+</style><div class=""cp-root"" lang=""pt-BR"">
+  <header class=""cp-top"">
+    <strong class=""cp-brand""><i aria-hidden=""true""></i>Logística Brasil</strong>
+    <p data-cp-period></p>
+  </header>
+  <section class=""cp-layout"">
+    <div class=""cp-intro"">
+      <h1><span class=""cp-phrase"">Toda entrega informa a próxima decisão.</span><span class=""cp-type"" data-cp-type aria-hidden=""true"">Toda entrega informa a próxima decisão.</span></h1>
+      <p>Explore o desempenho das entregas, compare operações e identifique onde concentrar a análise.</p>
+      <div class=""cp-summary"" data-cp-summary hidden>
+        <div><span>Pedidos analisados</span><strong data-cp-orders></strong></div>
+        <div><span>Lead time médio</span><strong data-cp-lead></strong></div>
+      </div>
+    </div>
+    <section class=""cp-preview"" aria-label=""Prévia executiva"">
+      <p class=""cp-state"" role=""status"" data-cp-state>Carregando os dados do painel…</p>
+      <div data-cp-preview hidden>
+        <div class=""cp-score"">
+          <div class=""cp-ring"" aria-hidden=""true"">
+            <svg viewBox=""0 0 120 120""><circle class=""cp-ring-track"" cx=""60"" cy=""60"" r" &
+    "=""52""/><circle class=""cp-ring-fill"" data-cp-ring cx=""60"" cy=""60"" r=""52"" transform=""rotate(-90 60 60)"" pathLength=""100"" stroke-dasharray=""0 100""/></svg>
+            <span class=""cp-ring-value"" data-cp-otif></span>
+          </div>
+          <div>
+            <h2>OTIF global</h2>
+            <span class=""cp-screen-reader"" data-cp-otif-accessible></span>
+            <p>Pedidos no prazo e completos</p>
+            <p class=""cp-change"" data-cp-change></p>
+          </div>
+        </div>
+        <div class=""cp-trend"">
+          <div><strong>OTIF por mês</strong><span data-cp-trend-range></span></div>
+          <div class=""cp-trend-plot"" data-cp-trend></div>
+        </div>
+      </div>
+    </section>
+  </section>
+  <div class=""cp-road"" aria-hidden=""true""><span class=""cp-vehicle cp-vehicle-a""></span><span class=""cp-vehicle cp-vehicle-b""></span><span class=""cp-vehicle cp-vehicle-c""></span></div>
+  <footer class=""cp-foot"">
+    <div class=""cp-source""><span data-cp-source></span><span data-cp-reference></span><time data-cp-time></time></div>
+    <div class=""cp-slot"" data-cp-slot aria-hidden=""true""></div>
+  </footer>
+  <script type=""application/json"" class=""cp-data"">" & Payload &
+    "</script>
+  <script>(() => {
+  'use strict';
+  const root = document.currentScript?.closest('.cp-root') ||
+    [...document.querySelectorAll('.cp-root:not([data-cp-ready])')].at(-1);
+  if (!root || root.hasAttribute('data-cp-ready')) return;
+  root.setAttribute('data-cp-ready', '');
+  const find = key => root.querySelector('[data-cp-' + key + ']');
+  const state = find('state');
+  try {
+
+  function compareCalendar(meta, month, priorMonth) {
+    const daysInMonth = key => {
+      const [year, number] = key.split('-').map(Number);
+      return new Date(Date.UTC(year, number, 0)).getUTCDate();
+    };
+    const currentDays = meta.calendarioComparavel?.find(x => x.m === month)?.dias || [];
+    if (!currentDays.length || currentDays.length === daysInMonth(month)) {
+      return { partial: false, days: null };
+    }
+    const days = currentDays.filter(day => day <= daysInMonth(priorMonth));
+    return { partial: true, days: new Set(days), label: days.length ?
+      days.at(-1) - days[0] + 1 === days.length ?
+        'dias ' + days[0] + '–' + days.at(-1) : days.length + ' dias equivalentes' : null };
+  }
+  function monthIsPartial(meta, month) {
+    const next = new Date(month + '-01T00:00:00Z');
+    next.setUTCMonth(next.getUTCMonth() + 1);
+    next.setUTCDate(0);
+    const row = meta.calendarioComparavel?.find(x => x.m === month);
+    return Boolean(row?.dias.length && row.dias.length < next.getUTCDate());
+  }
+    const { meta, kpis, series, baseInterativa = [], baseComparacao = [] } = JSON.parse(root.querySelector('.cp-data').textContent);
+    if (!meta || !kpis || !Array.isArray(series?.mensal)) throw new Error('Estrutura Gold incompleta');
+    const amount = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 2 });
+    const percentage = new Intl.NumberFormat('pt-BR', { style: 'percent', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const signed = new Intl.NumberFormat('pt-BR', { signDisplay: 'exceptZero', maximumFractionDigits: 2 });
+    const months =" &
+    " new Intl.DateTimeFormat('pt-BR', { month: 'short', year: '2-digit', timeZone: 'UTC' });
+    const localClock = new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short', timeZone: 'America/Sao_Paulo' });
+    const clock = new Date();
+    const finite = value => typeof value === 'number' && Number.isFinite(value);
+    const monthDate = key => new Date(key + '-01T00:00:00Z');
+    const monthName = key => months.format(monthDate(key)).replace('.', '').replace(' de ', '/');
+    const previousMonth = key => {
+      const date = monthDate(key);
+      date.setUTCMonth(date.getUTCMonth() - 1);
+      return date.toISOString().slice(0, 7);
+    };
+    const labelDate = value => value.split('-').reverse().join('/');
+    find('period').textContent = meta.dataInicial && meta.dataFinal ?
+      labelDate(meta.dataInicial) + ' a ' + labelDate(meta.dataFinal) + ' · data do pedido' : 'Sem período com pedidos';
+    find('source').textContent = meta.fonte ? (meta.baseSimulada ? 'Base simulada · ' : 'Fonte · ') + meta.fonte.split(' / ').at(-1) : 'Fonte indisponível';
+    find('reference').textContent = meta.fonteAtualizadaEm ? 'Referência da base · ' + labelDate(meta.fonteAtualizadaEm) : 'Referência da base indisponível';
+    find('time').dateTime = clock.toISOString();
+    find('time').textContent = 'Gerado em ' + localClock.format(clock) + ' (Brasília)';
+    if (!(kpis.pedidos > 0)) {
+      state.textContent = 'Nenhum pedido no recorte atual do Power BI.';
+      return;
+    }
+    find('orders').textContent = amount.format(kpis.pedidos);
+    find('lead').textContent = finite(kpis.leadTimeMedio) ? amount.format(kpis.leadTimeMedio) + ' dias' : '—';
+    find('summary').hidden = false;
+    find('preview').hidden = false;
+    state.hidden = true;
+
+    const trend = [...series.mensal].sort((a, b) => a.m.localeCompare(b.m));
+    const latest = trend.at(-1);
+    const validRate = entry => finite(entry?.otifPercentual);
+    const reference = latest && previousMonth(latest.m);
+  " &
+    "  const interval = latest && compareCalendar(meta, latest.m, reference);
+    const eligibleIn = rows => rows.reduce((sum, row) => sum + row.pe, 0);
+    const rate = rows => {
+      const eligible = eligibleIn(rows);
+      return eligible ? rows.reduce((sum,row)=>sum+row.q,0) / eligible : null;
+    };
+    const useDays = row => !interval?.days || interval.days.has(row.d);
+    const priorFull = baseComparacao.some(row => row.m === reference) ? baseComparacao : baseInterativa;
+    const priorRows = priorFull.filter(row => row.m === reference && useDays(row));
+    const currentRows = baseInterativa.filter(row => row.m === latest?.m && useDays(row));
+    const latestValue = interval?.partial ? rate(currentRows) : latest?.otifPercentual;
+    const previousValue = rate(priorRows);
+    const delta = finite(latestValue) && finite(previousValue) ? latestValue - previousValue : null;
+    const change = find('change');
+    if (delta != null && latest) {
+      const movement = document.createElement('span');
+      movement.dataset.direction = delta > 0 ? 'up' : delta < 0 ? 'down' : 'flat';
+      movement.textContent = signed.format(delta * 100) + ' p.p.';
+      change.append(movement, ' · ' + monthName(latest.m) + ' vs ' + monthName(reference) +
+        (interval?.partial && interval.label ? ' · ' + interval.label : '') +
+        ' · ' + amount.format(eligibleIn(currentRows)) + ' vs ' + amount.format(eligibleIn(priorRows)) + ' elegíveis');
+    } else change.textContent = 'Sem comparação com o mês anterior';
+
+    const trendPlot = find('trend');
+    if (trend.some(validRate)) {
+      const svg = (tag, attributes) => {
+        const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        for (const [key, value] of Object.entries(attributes)) element.setAttribute(key, value);
+        return element;
+      };
+      const layout = svg('svg', { viewBox: '0 0 320 70', preserveAspectRatio: 'none', role: 'img',
+        'aria-label': 'Tendência mensal do OTIF. ' + t" &
+    "rend.filter(validRate).map(row => monthName(row.m) + ' ' + percentage.format(row.otifPercentual)).join(', ') });
+      for (const y of [10, 35, 60]) layout.append(svg('line', { x1: 5, x2: 315, y1: y, y2: y, class: 'cp-trend-grid' }));
+      const path = [];
+      let continued = false;
+      let lastPoint;
+      for (const [index, row] of trend.entries()) {
+        if (!validRate(row)) { continued = false; continue; }
+        const x = trend.length === 1 ? 160 : 5 + 310 * index / (trend.length - 1);
+        const y = 60 - 50 * row.otifPercentual;
+        path.push((continued ? 'L' : 'M') + x + ' ' + y);
+        continued = true;
+        lastPoint = { cx: x, cy: y, r: 4, class: 'cp-trend-dot' };
+      }
+      layout.append(svg('path', { d: path.join(' '), class: 'cp-trend-line' }), svg('circle', lastPoint));
+      trendPlot.append(layout);
+      find('trend-range').textContent = trend.length === 1 ? monthName(trend[0].m) :
+        monthName(trend[0].m) + ' a ' + monthName(trend.at(-1).m);
+      if (monthIsPartial(meta, trend.at(-1).m)) find('trend-range').append(' · último mês parcial');
+    } else trendPlot.textContent = 'Sem pedidos elegíveis para OTIF no recorte.';
+
+    const final = finite(kpis.otifPercentual) ? Math.min(1, Math.max(0, kpis.otifPercentual)) : null;
+    const ring = find('ring');
+    const score = find('otif');
+    const type = find('type');
+    const sentence = Array.from(type.textContent);
+    const motion = matchMedia('(prefers-reduced-motion: reduce)');
+    const paint = value => {
+      score.textContent = value == null ? '—' : percentage.format(value);
+      ring.setAttribute('stroke-dasharray', (value ?? 0) * 100 + ' 100');
+      ring.style.visibility = value > 0 ? '' : 'hidden';
+    };
+    find('otif-accessible').textContent = final == null ? 'Sem elegíveis' : percentage.format(final);
+    if (motion.matches) {
+      paint(final);
+      return;
+    }
+    paint(final == null ? null : 0);
+    type.textContent = '';
+    let started;
+    const" &
+    " duration = 950;
+    function step(time) {
+      if (!root.isConnected) return;
+      started ??= time;
+      const frame = motion.matches ? 1 : Math.min((time - started) / duration, 1);
+      const value = frame === 1 ? final : final == null ? null : final * (1 - (1 - frame) ** 3);
+      type.textContent = sentence.slice(0, Math.ceil(sentence.length * frame)).join('');
+      paint(value);
+      if (frame < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  } catch (error) {
+    state.textContent = 'Não foi possível carregar a capa. Verifique a medida Gold.';
+    state.hidden = false;
+    find('preview').hidden = true;
+    find('summary').hidden = true;
+    console.error('Capa Logística', error);
+  }
+})();
+</script>
+</div>
+"

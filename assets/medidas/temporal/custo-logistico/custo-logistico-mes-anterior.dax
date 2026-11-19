@@ -1,0 +1,2 @@
+Custo logístico mês anterior =
+IF(HASONEVALUE(dCalendario[AnoMes]), CALCULATE([Custo logístico], PREVIOUSMONTH(dCalendario[Data])))
