@@ -1,6 +1,6 @@
 # Construção e validação
 
-[Voltar ao README](../README.md) · [Configurar MCP](conexao-mcp.md) · [Usar os prompts](prompts-e-skills.md)
+[Voltar ao README](../README.md) · [Arquitetura](arquitetura.md) · [Configurar MCP](conexao-mcp.md) · [Usar os prompts](prompts-e-skills.md)
 
 ## 1. Diagnosticar a fonte e montar o modelo
 
