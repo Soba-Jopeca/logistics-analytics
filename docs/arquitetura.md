@@ -4,18 +4,7 @@
 
 ## Fluxo dos dados
 
-```mermaid
-flowchart LR
-    X["TabelaBaseLogistica · Excel simulado"] --> S["stgLogistica · Power Query"]
-    S --> M["fPedidos e oito dimensões"]
-    M --> D["Medidas DAX"]
-    D --> G["JSON Gold Dashboard Logistica"]
-    M --> O["JSON Gold Operacao Logistica"]
-    G --> A["Capa e Estratégia"]
-    O --> B["Operação"]
-    A --> P["Power BI Service"]
-    B --> P
-```
+O [diagrama no README](../README.md#arquitetura) mostra o caminho da planilha até o Power BI Service, com os contratos da Estratégia e da Operação.
 
 | Etapa | Responsabilidade | Artefato |
 | --- | --- | --- |
