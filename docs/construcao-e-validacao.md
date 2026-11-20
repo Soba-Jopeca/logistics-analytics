@@ -9,7 +9,7 @@ O arquivo original é `base_logistica_simulada_brasil.xlsx`. A tabela Excel `Tab
 Use as [consultas M exportadas](../examples/power-query/README.md) para reproduzir o modelo com os mesmos campos. O único ajuste de origem é definir o caminho local da planilha.
 
 1. Leia a tabela com `Excel.Workbook(File.Contents(...), null, true)`. Use um parâmetro local para a origem ao compartilhar o projeto.
-2. Crie `stgLogistica` com tipos explícitos. Trate IDs como texto, datas como data e métricas conforme o tipo da fonte. Preserve as 50 entregas em branco. O diagnóstico confirmou 1.000 chaves distintas e zero duplicidades em `ID_Pedido`.
+2. Crie `stgLogistica` com tipos explícitos. Trate IDs como texto, datas como data e métricas conforme o tipo da fonte. Preserve os 50 pedidos sem data de entrega. O diagnóstico confirmou 1.000 chaves distintas e zero duplicidades em `ID_Pedido`.
 3. Use `fPedidos` com **uma linha por pedido**. Separe atributos de produto, geografia e transporte nas dimensões. Preserve datas de eventos na fato e crie flags de qualidade quando aplicável.
 4. Relacione dimensões à fato em **1:*** com filtro unidirecional. Valide unicidade, chaves órfãs e propagação de filtros antes de escrever medidas.
 
@@ -60,9 +60,9 @@ Em um mês parcial, compare os mesmos dias disponíveis. Em julho de 2026, a com
 | Estratégia | `HTML Dashboard Logistica` |
 | Operação | `HTML Operacao Logistica` |
 
-Adicione o visual personalizado **HTML Content, edição Regular** em cada página e coloque a medida correspondente em **Values**. O projeto usa JavaScript local para filtros, tooltips, ordenação e movimento reduzido. A edição Secure tem restrições de scripts. Confira no Desktop e na versão publicada antes de divulgar. [Visual HTML Content](https://marketplace.microsoft.com/en-us/product/wa200001930?tab=overview) · [Função Values](https://html-content.com/docs/data-roles) · [Scripts na edição Regular](https://html-content.com/docs/scripting)
+Adicione o visual personalizado **HTML Content, edição Regular** em cada página e coloque a medida correspondente em **Values**. O projeto usa JavaScript local para filtros, tooltips, ordenação e movimento reduzido. A edição Secure remove scripts incorporados. Confira no Desktop e na versão publicada antes de divulgar. [Visual HTML Content](https://marketplace.microsoft.com/en-us/product/wa200001930?tab=overview) · [Função Values](https://html-content.com/docs/data-roles) · [Scripts na edição Regular](https://html-content.com/docs/scripting)
 
-A publicação deste caso foi feita no Power BI Service. O [iframe de exemplo](../examples/powerbi-embed.html) usa o link público fornecido para o projeto. O README usa imagem e link. O iframe se destina a uma página HTML. [Publicar na Web](https://learn.microsoft.com/en-us/power-bi/collaborate-share/service-publish-to-web)
+O caso foi publicado no Power BI Service. Use o [exemplo de incorporação](../examples/powerbi-embed.html) para exibir o relatório público em uma página HTML. [Publicar na Web](https://learn.microsoft.com/en-us/power-bi/collaborate-share/service-publish-to-web)
 
 ## 5. Conferir os resultados
 

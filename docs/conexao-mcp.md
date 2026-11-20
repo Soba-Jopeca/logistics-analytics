@@ -65,18 +65,18 @@ Em **JSON**, uma barra literal é escrita como `\\` porque o formato faz escape.
 
 ## 4. Autorizar a licença e testar a conexão
 
-Leia os termos do servidor e conclua o aceite se o cliente solicitar. A execução sem interação aceita `--accept-eula` após o consentimento. Neste projeto, o aceite foi solicitado antes de habilitar o acesso ao servidor. [Termos da Microsoft](https://go.microsoft.com/fwlink/?LinkId=2381247) · [Opções do executável](https://github.com/microsoft/powerbi-modeling-mcp#%EF%B8%8F-settings)
+Leia os termos do servidor e conclua o aceite se o cliente solicitar. Use `--accepteula` em execução sem interação depois de concordar com os termos. A versão 1.0.1 também reconhece `--accept-eula`. [Termos da Microsoft](https://go.microsoft.com/fwlink/?LinkId=2381247) · [Opções de aceite no servidor](https://github.com/microsoft/powerbi-modeling-mcp#accept-the-eula)
 
-Com o relatório aberto, rode o [prompt de diagnóstico inicial](prompts/01-diagnostico-e-modelo.md) ou comece por este teste:
+Com o relatório aberto, comece pelo teste abaixo. Depois de validar a conexão, use o [prompt de diagnóstico do projeto](prompts/01-diagnostico-e-modelo.md) para inspecionar a fonte e planejar o modelo.
 
 ```text
 Use o servidor powerbi-authoring-local. Liste as instâncias do Power BI Desktop,
 conecte ao relatório aberto e confirme seu nome. Liste as tabelas e medidas.
-Execute uma consulta DAX para contar as linhas de fPedidos e os IDs distintos.
-Faça apenas leitura.
+Execute EVALUATE ROW("Conexao", 1). Se fPedidos já existir, consulte também
+a contagem de linhas e de IDs distintos. Faça apenas leitura.
 ```
 
-A validação é bem-sucedida quando o agente lista objetos do modelo correto e executa uma consulta DAX. No caso documentado, a descoberta automática falhou dentro do sandbox. A conexão ocorreu pelo MCP local usando o endpoint da sessão no formato `Data Source=localhost:<porta-da-sessão>`, após a autorização de acesso ao processo local. A porta é dinâmica. [Conexão local do Power BI Authoring MCP](https://learn.microsoft.com/en-us/power-bi/developer/mcp/power-bi-authoring-mcp#connect-to-a-semantic-model)
+O teste deve retornar uma linha com `Conexao = 1` no modelo selecionado. No caso documentado, a descoberta automática falhou dentro do sandbox. A conexão ocorreu pelo MCP local usando o endpoint da sessão no formato `Data Source=localhost:<porta-da-sessão>`, após a autorização de acesso ao processo local. A porta é dinâmica. [Conexão local do Power BI Authoring MCP](https://learn.microsoft.com/en-us/power-bi/developer/mcp/power-bi-authoring-mcp#connect-to-a-semantic-model)
 
 ## 5. Criar ou reutilizar as skills
 

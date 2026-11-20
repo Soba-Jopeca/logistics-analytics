@@ -161,7 +161,7 @@ erDiagram
 | Consistência dos indicadores | Os totais do JSON foram reconciliados com as medidas nativas. A conferência incluiu recortes com filtros e sem registros. |
 | Comparação mensal | Julho de 2026 cobre os dias 1 a 10. Na mesma janela de junho havia 33 pedidos, contra 25 em julho. A variação foi de **−24,2%**. |
 
-A base é simulada e os status da Operação refletem a data de referência registrada. As concentrações de falhas indicam onde investigar. A base não estabelece metas de OTIF nem SLA contratual.
+O dashboard usa **Publicar na Web** com dados e transportadoras simulados. Os status da Operação refletem a posição registrada na fonte. A base não estabelece metas de OTIF nem SLA contratual.
 
 ## Organização do repositório
 
@@ -173,4 +173,12 @@ A base é simulada e os status da Operação refletem a data de referência regi
 | `assets/` | Prévias do relatório, organização das medidas e [catálogo das 53 expressões DAX](assets/medidas/README.md). |
 | `examples/` | Consultas Power Query e DAX, amostra reduzida e exemplo de incorporação. |
 
-A demonstração usa **Publicar na Web** com dados e transportadoras simulados.
+## Conclusão
+
+O estudo mostra como usar a mesma base para decidir onde investigar falhas de serviço e quais pedidos revisar na operação. A leitura combina o volume de ocorrências, a proporção de falhas e a fila de pedidos para orientar ações diferentes.
+
+A autoria assistida por IA ficou verificável. A planilha, as consultas Power Query, as medidas, as skills e os prompts estão versionados. Com as consultas DAX de validação, quem reproduzir o caso pode rastrear como cada regra chegou ao indicador exibido e conferir o resultado no próprio modelo.
+
+## Autor
+
+**João Caneca** · [Projetos no portfólio](https://soba-jopeca.github.io/projetos.html)
