@@ -14,7 +14,7 @@ RETURN
   --ld-road-marker: #6ce7cb; --ld-road-marker-alt: #88c8fa; --ld-road-headlight: #f4ffff;
   --ld-tooltip-bg: #123047; --ld-tooltip-fg: #fff; --ld-focus: #007a6e;
   --ld-s1: 4px; --ld-s2: 8px; --ld-s3: 12px; --ld-s4: 16px; --ld-s5: 20px; --ld-s6: 24px; --ld-s7: 32px;
-  --ld-r1: 8px; --ld-r2: 14px; --ld-text-xs: .75rem; --ld-text-sm: .83rem; --ld-text-md: .96rem;
+  --ld-r1: 8px; --ld-r2: 14px; --ld-text-xs: .9rem; --ld-text-sm: .98rem; --ld-text-md: 1rem;
   --ld-num: clamp(1.08rem, 2vw, 1.77rem); --ld-title: clamp(1.65rem, 3vw, 2.65rem);
   display: block; position: relative; container: ld-layout / inline-size;
   background: var(--ld-bg); color: var(--ld-text); font: 400 1rem/1.42 var(--ld-font);
@@ -27,8 +27,8 @@ RETURN
   --ld-bar: #6f9fca; --ld-cost: #85b7e1; --ld-line: #66ead0; --ld-median: #c6a7df; --ld-risk: #f5a486;
   --ld-spark: #75bfd0; --ld-spark-wash: #75bfd026;
   --ld-growth: #7fe8b4; --ld-growth-bg: #18382e; --ld-drop: #ffabb7; --ld-drop-bg: #40252e;
-  --ld-tooltip-bg: #e7f2fa; --ld-tooltip-fg: #122731; --ld-" &
-    "focus: #66ead0;
+  --ld-tooltip-bg: #e7f2fa; --ld-tooltip-fg: #122731; --ld-foc" &
+    "us: #66ead0;
   color-scheme: dark;
 }
 .ld-root *, .ld-root *::before, .ld-root *::after { box-sizing: border-box; }
@@ -48,12 +48,18 @@ RETURN
 .ld-button:disabled { opacity: .62; cursor: default; }
 .ld-theme { color: var(--ld-on-head); border-color: var(--ld-on-head-muted); background: var(--ld-head); }
 .ld-theme:hover { color: var(--ld-on-accent); background: var(--ld-accent); border-color: var(--ld-accent); }
-.ld-controls { margin: var(--ld-s3) 0; padding: var(--ld-s3) var(--ld-s4); background: var(--ld-surface); border: 1px solid var(--ld-border); border-radius: var(--ld-r2); display: flex; flex-wrap: wrap; align-items: end; gap: var(--ld-s3); }
+.ld-controls { margin: var(--ld-s3) 0; padding: var(--ld-s3) var(--ld-s4); background: var(--ld-surface); border: 1px solid var(--ld-border); border-radius: var(--ld-r2); display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--ld-s2); min-width: 0; }
 .ld-fields { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--ld-s3); flex: 1 1 650px; min-width: 0; }
-.ld-field { min-width: 0; display: grid; gap: var(--ld-s1); font-we" &
-    "ight: 620; font-size: var(--ld-text-xs); color: var(--ld-muted); }
+.ld-field { min-width: 0; display: grid; gap: var(--" &
+    "ld-s1); font-weight: 620; font-size: var(--ld-text-xs); color: var(--ld-muted); }
 .ld-field select { width: 100%; min-width: 0; font: 500 var(--ld-text-sm) var(--ld-font); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); padding: var(--ld-s2); min-height: 36px; color: var(--ld-text); background: var(--ld-soft); }
-.ld-clear { flex: 0 0 auto; }
+  .ld-filter-bar { display:grid; grid-template-columns:minmax(0,1fr) max-content; align-items:end; gap:var(--ld-s3); min-width:0; }
+  .ld-filter-bar > .ld-fields { align-items:end; }
+  .ld-filter-bar > .ld-clear { min-block-size:40px; white-space:nowrap; max-inline-size:100%; }
+  @container ld-layout (max-width:560px) {
+    .ld-filter-bar { grid-template-columns:minmax(0,1fr); gap:var(--ld-s2); }
+    .ld-filter-bar > .ld-clear { justify-self:end; }
+  }
 .ld-state { padding: var(--ld-s7) var(--ld-s4); border: 1px solid var(--ld-border); border-radius: var(--ld-r2); background: var(--ld-surface); color: var(--ld-muted); }
 .ld-content { display: grid; gap: var(--ld-s3); min-width: 0; }
 .ld-ticker { display: flex; flex-wrap: wrap; align-items: center; gap: var(--ld-s2) var(--ld-s4); padding: var(--ld-s2) var(--ld-s4); color: var(--ld-muted); background: var(--ld-soft); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); font-size: var(--ld-text-xs); }
@@ -63,12 +69,12 @@ RETURN
 .ld-kpis { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.23fr) minmax(0, 1.25fr) repeat(2, minmax(0, 1fr)); gap: var(--ld-s3); }
 .ld-card, .ld-panel { min-width: 0; border: 1px solid var(--ld-border); background: var(--ld-surface); border-radius: var(--ld-r2); }
 .ld-card { display: grid; align-content: start; gap: var(--ld-s1); padding: var(--ld-s3) var(--ld-s4); }
-.ld-card[data-primary] { background: var(--ld-accent-soft); border-top: 3px solid var(--ld-accent); padding-top: calc(var(--ld-s3) - 2px); }
+.ld-card[data-primary] { background: var(--ld-accent" &
+    "-soft); border-top: 3px solid var(--ld-accent); padding-top: calc(var(--ld-s3) - 2px); }
 .ld-kpi-label { font-size: var(--ld-text-xs); font-weight: 650; color: var(--ld-muted); }
 .ld-value { font-size: var(--ld-num); font-variant-numeric: tabular-nums; font-weight: 740; letter-spacing: -.04em; overflow-wrap: anywhere; line-height: 1.2; }
 .ld-kpi-detail { font-size: var(--ld-text-xs); color: var(--ld-muted); }
-.ld-delta { font-size: var(--" &
-    "ld-text-xs); color: var(--ld-muted); margin-top: var(--ld-s1); }
+.ld-delta { font-size: var(--ld-text-xs); color: var(--ld-muted); margin-top: var(--ld-s1); }
 .ld-delta[data-direction=""lower""] { color: var(--ld-risk); }
 .ld-delta[data-direction=""higher""] { color: var(--ld-accent); }
 .ld-overview { display: grid; grid-template-columns: minmax(0, 2.25fr) minmax(0, 1fr); gap: var(--ld-s3); }
@@ -88,12 +94,12 @@ RETURN
 .ld-gridline { stroke: var(--ld-border); stroke-width: 1; }
 .ld-axis { fill: var(--ld-muted); font: 11px var(--ld-font); }
 .ld-bar { fill: var(--ld-bar); }
-.ld-otif-line { stroke: var(--ld-line); stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ld-otif-line { stroke: var(--ld-line); stroke-widt" &
+    "h: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 .ld-otif-dot { fill: var(--ld-line); stroke: var(--ld-surface); stroke-width: 1.5; }
 .ld-hit { fill: transparent; cursor: help; }
 .ld-hit:hover, .ld-hit:focus { fill: var(--ld-line); fill-opacity: .08; stroke: var(--ld-focus); stroke-opacity: .55; outline: none !important; }
-.ld-legend { display: flex; flex-wrap: wrap; gap: var(--ld-s3); font-size: var(--ld-text-xs); col" &
-    "or: var(--ld-muted); }
+.ld-legend { display: flex; flex-wrap: wrap; gap: var(--ld-s3); font-size: var(--ld-text-xs); color: var(--ld-muted); }
 .ld-legend span { display: inline-flex; gap: var(--ld-s1); align-items: center; }
 .ld-legend span::before { content: """"; display: inline-block; background: var(--ld-bar); width: var(--ld-s3); height: var(--ld-s2); border-radius: 2px; }
 .ld-legend .ld-key-otif::before { background: var(--ld-line); height: 3px; }
@@ -112,11 +118,11 @@ RETURN
 .ld-table th, .ld-table td { text-align: right; white-space: nowrap; padding: var(--ld-s2) var(--ld-s3); border-bottom: 1px solid var(--ld-border); }
 .ld-table th { background: var(--ld-soft); color: var(--ld-muted); }
 .ld-table th:first-child { text-align: left; }
-.ld-table tbody th { background: none; color: var(--ld-text); font-weight: 630; }
+.ld-tabl" &
+    "e tbody th { background: none; color: var(--ld-text); font-weight: 630; }
 .ld-tooltip { position: absolute; z-index: 4; max-width: min(290px, calc(100% - 24px)); pointer-events: none; padding: var(--ld-s2) var(--ld-s3); border-radius: var(--ld-r1); background: var(--ld-tooltip-bg); color: var(--ld-tooltip-fg); white-space: pre-line; overflow-wrap: anywhere; font-size: var(--ld-text-xs); }
 @container ld-layout (max-width: 920px) {
-  .ld-ov" &
-    "erview { grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); }
+  .ld-overview { grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); }
   .ld-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @container ld-layout (max-width: 685px) {
@@ -139,13 +145,13 @@ RETURN
 .ld-mode dl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--ld-s2); margin: 0; font-size: var(--ld-text-xs); }
 .ld-mode dt, .ld-mode p, .ld-rank-empty { color: var(--ld-muted); font-size: var(--ld-text-xs); }
 .ld-mode dd { margin: 0; font-weight: 650; font-variant-numeric: tabular-nums; }
-.ld-classification { padding: var(--ld-s1) var(--ld-s2); background: var(--ld-soft); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); }
+.ld-classification { padding: var(" &
+    "--ld-s1) var(--ld-s2); background: var(--ld-soft); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); }
 .ld-table th button { background: transparent; border: 0; color: inherit; cursor: pointer; font: inherit; font-weight: 650; padding: 0; }
 .ld-table th button span { margin-inline-start: var(--ld-s1); color: var(--ld-muted); }
 .ld-table th[aria-sort] button, .ld-table th[aria-sort] button span { color: var(--ld-accent); }
 
-" &
-    ".ld-road { position: relative; isolation: isolate; overflow: hidden; block-size: var(--ld-road-size); border-block: 1px solid var(--ld-road-edge); background: var(--ld-road-bed); pointer-events: none; }
+.ld-road { position: relative; isolation: isolate; overflow: hidden; block-size: var(--ld-road-size); border-block: 1px solid var(--ld-road-edge); background: var(--ld-road-bed); pointer-events: none; }
 .ld-road::before { content: """"; position: absolute; inset: 50% 0 auto; border-top: 1px dashed var(--ld-road-stripe); }
 .ld-vehicle { position: absolute; left: var(--ld-from); top: var(--ld-lane, 21%); width: 18px; height: 5px; border-radius: 2px; background: var(--ld-vehicle-color, var(--ld-road-marker)); box-shadow: 0 0 9px var(--ld-vehicle-color, var(--ld-road-marker)); animation: ld-drive var(--ld-trip) linear 3; animation-delay: var(--ld-delay, 0s); }
 .ld-vehicle::after { content: """"; position: absolute; top: 1px; right: 2px; width: 3px; height: 3px; background: var(--ld-road-headlight); border-radius: 1px; }
@@ -155,18 +161,18 @@ RETURN
 @keyframes ld-drive { to { left: var(--ld-to); } }
 .ld-header .ld-road { flex: 0 0 100%; border-radius: var(--ld-r1); }
 .ld-product-ticker { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: var(--ld-s3); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); padding: var(--ld-s2) var(--ld-s4); color: var(--ld-text); background: var(--ld-surface); font-size: var(--ld-text-xs); }
-.ld-product-ticker > strong { color: var(--ld-accent); }
+.ld-product-ticker >" &
+    " strong { color: var(--ld-accent); }
 .ld-product-window { min-width: 0; overflow: hidden; }
 .ld-product-track { display: flex; width: max-content; min-width: 200%; animation: ld-product-pass 18s linear 2; }
 .ld-product-ticker:hover .ld-product-track, .ld-product-ticker:focus-within .ld-product-track { animation-play-state: paused; }
-.ld-product-list { display: flex; flex: 1 0 50%; justify-content: space-around; gap: var(--ld-s3); list-sty" &
-    "le: none; margin: 0; padding: 0 var(--ld-s3); }
+.ld-product-list { display: flex; flex: 1 0 50%; justify-content: space-around; gap: var(--ld-s3); list-style: none; margin: 0; padding: 0 var(--ld-s3); }
 .ld-product-list li { display: inline-flex; align-items: baseline; gap: var(--ld-s2); }
 .ld-product-position { color: var(--ld-accent); font-weight: 740; }
 .ld-product-qty { font-weight: 650; white-space: nowrap; }
 .ld-card { transition: transform 180ms ease, border-color 180ms ease; }
-.ld-card:hover { transform: translateY(-2px); border-color: var(--ld-accent); }
-.ld-card.ld-enter { animation: ld-card-in 480ms ease-out both; }
+.ld-card:hover { border-color: var(--ld-accent); }
+
 .ld-delta { width: fit-content; padding: var(--ld-s1) var(--ld-s2); border-radius: var(--ld-r1); }
 .ld-delta[data-meaning=""better""] { color: var(--ld-growth); background: var(--ld-growth-bg); }
 .ld-delta[data-meaning=""worse""] { color: var(--ld-drop); background: var(--ld-drop-bg); animation: ld-delta-pulse 850ms ease-in-out 2; }
@@ -181,14 +187,14 @@ RETURN
 @keyframes ld-line-in { from { stroke-dashoffset: 100; } to { stroke-dashoffset: 0; } }
 @keyframes ld-fade-in { from { opacity: 0; } }
 @container ld-layout (max-width: 685px) {
-  .ld-product-ticker { grid-template-columns: minmax(0, 1fr); gap: var(--ld-s1); }
+  .ld-product-ticker" &
+    " { grid-template-columns: minmax(0, 1fr); gap: var(--ld-s1); }
   .ld-product-track { width: auto; min-width: 0; animation: none; }
   .ld-product-list { flex: 1; flex-direction: column; gap: var(--ld-s1); padding: 0; }
   .ld-product-list[aria-hidden] { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ld-root *, .ld-root *::before, .l" &
-    "d-root *::after { animation: none !important; transition: none !important; }
+  .ld-root *, .ld-root *::before, .ld-root *::after { animation: none !important; transition: none !important; }
   .ld-root .ld-card:hover { transform: none; }
 }
 
@@ -210,13 +216,13 @@ RETURN
 .ld-spark-dot.ld-partial { background: var(--ld-surface); border: 1px solid var(--ld-spark); }
 @container ld-layout (max-width: 685px) {
   .ld-filter-box { background: var(--ld-surface); border: 1px solid var(--ld-border); border-radius: var(--ld-r1); }
-  .ld-filter-box > summary { display: list-item; padding: var(--ld-s2) var(--ld-s3); cursor: pointer; font-size: var(--ld-text-sm); font-weight: 650; }
+  .ld-filter-box > summary { display: list-item; padding: var(--ld-s2) var(--ld-s3); cursor: pointer; font-size: var(--ld-text-" &
+    "sm); font-weight: 650; }
   .ld-filter-box > summary span { color: var(--ld-muted); font-weight: 500; }
   .ld-filter-box .ld-controls { border: 0; }
 }
 
-.ld-delta { display: inline-flex; gap: var(--ld-s1); align-items: baseline; width: fit-content; max-width: 100%; padding: 2px 6px; border: 1px solid var(--ld-border); border-radius: 999px; backgroun" &
-    "d: var(--ld-soft); line-height: 1.15; font-size: .71rem; }
+.ld-delta { display: inline-flex; gap: var(--ld-s1); align-items: baseline; width: fit-content; max-width: 100%; padding: 2px 6px; border: 1px solid var(--ld-border); border-radius: 999px; background: var(--ld-soft); line-height: 1.15; font-size: .71rem; }
 .ld-delta[data-meaning=""better""] { border-color: color-mix(in srgb, var(--ld-growth) 27%, var(--ld-border)); }
 .ld-delta[data-meaning=""worse""] { border-color: color-mix(in srgb, var(--ld-drop) 25%, var(--ld-border)); }
 .ld-delta strong, .ld-delta span { white-space: nowrap; }
@@ -232,19 +238,37 @@ RETURN
   .ld-delta { flex-wrap: wrap; column-gap: 3px; }
 }
 
-.ld-filter-groups { display: grid; gap: var(--ld-s2); flex: 1 1 420px; min-width: 0; }
+
 .ld-fields.ld-fields-primary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .ld-fields.ld-fields-secondary { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: var(--ld-s2); }
 .ld-extra-filters > summary, .ld-carrier-detail > summary { cursor: pointer; color: var(--ld-accent); font-weight: 650; font-size: var(--ld-text-sm); }
-.ld-strategy-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.ld-strategy-kpis" &
+    " { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .ld-strategy-legend { min-height: 1em; }
 .ld-detail-inner { margin-top: var(--ld-s3); }
 .ld-chart .ld-axis-partial { font-weight: 700; }
 @container ld-layout (max-width: 685px) {
-  .ld-fields.ld-fields-second" &
-    "ary { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .ld-fields.ld-fields-secondary { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .ld-strategy-kpis { grid-template-columns: repeat(2, minmax(0,1fr)); }
 }
+
+.ld-picker { position:relative; min-width:0; }
+.ld-picker > button { width:100%; min-height:40px; display:flex; align-items:center; justify-content:space-between; gap:10px; text-align:left; padding:7px 10px; color:var(--ld-text); background:var(--ld-soft); border:1px solid var(--ld-border); border-radius:7px; font:600 .91rem/1.3 var(--ld-font); cursor:pointer; overflow-wrap:anywhere; }
+.ld-picker > button::after { content:""""; flex:none; width:7px; height:7px; margin-inline-end:3px; border:solid currentColor; border-width:0 2px 2px 0; transform:rotate(45deg) translateY(-2px); }
+.ld-picker > button[aria-expanded=""true""] { border-color:var(--ld-accent); }
+.ld-picker-list { position:absolute; z-index:15; inset:calc(100% + 4px) 0 auto; margin:0; padding:4px; list-style:none; overflow:auto; overscroll-behavior:contain; color:var(--ld-text); background:var(--ld-surface); border:1px solid var(--ld-border); border-radius:8px; box-shadow:0 6px 16px #0d263029; }
+.ld-picker[data-above] > .ld-picker-list { inset:auto 0 calc(100% + 4px); }
+.ld-picker-list > li { min-height:34px; display:flex; align-items:center; padding:6px 8px; border-radius:5px; cursor:pointer; font:500 .91rem/1.3 var(--ld-font); overflow-wrap:anywhere; }
+.ld-picker-list > [aria-selected=""true""] { font-weight:700; color:var(--ld-accent); background:var(--ld-accent-soft); }
+.ld-picker-list > li:hover,.ld-picker-list > li:focus { background:var(--ld-soft); outline:2px solid var(--ld-accent); outline-offset:-2px; }
+
+.ld-value { font-size:clamp(1.45rem, 2.35cqi, 2.15rem); }
+.ld-panel-head h2 { font-size:1.17rem; }
+.ld-axis { f" &
+    "ont-size:13px; }
+.ld-delta, .ld-table-rank { font-size:.84rem; }
+.ld-table thead th { font-size:.88rem; }
+.ld-panel-head .ld-field { min-inline-size:min(182px, 100%); }
 
 </style><div class=""ld-root"" data-theme=""light"" lang=""pt-BR"">
   <header class=""ld-header"" data-hc-suppress=""all"">
@@ -261,11 +285,14 @@ RETURN
   <details class=""ld-filter-box"" data-filter-box open>
     <summary>Filtros internos <span data-filter-summary></span></summary>
     <section class=""ld-controls"" data-hc-suppress=""all"" aria-label=""Filtros internos"">
-    <div class=""ld-filter-groups"">
-      <div class=""ld-fields ld-fields-primary"" data-fields></div>
-      <details class=""ld-extra-filters""><summary>Mais filtros</summary><div class=""ld-fields ld-fields-secondary"" data-extra-fields></div></details>
-    </div>
-    <button type=""button"" class=""ld-button ld-clear"" data-clear disabled>Limpar filtros</button>
+      <div class=""ld-filter-bar"">
+        <div class=""ld-fields ld-fields-primary"" data-fields></div>
+        <button type=""button"" class=""ld-button ld-clear"" data-clear disabled>Limpar filtros</button>
+      </div>
+      <details class=""ld-extra-filters"">
+        <summary>Mais filtros</summary>
+        <div class=""ld-fields ld-fields-secondary"" data-extra-fields></div>
+      </details>
     </section>
   </details>
   <p class=""ld-state"" role=""status"" data-state>Carregando painel interativo…</p>
@@ -276,9 +303,9 @@ RETURN
     <div class=""ld-overview"">
       <section class=""ld-panel"">
         <div class=""ld-panel-head"">
-          <div><h2>Tendência mensal</h2><p data-chart-caption></p></div>
-  " &
-    "        <label class=""ld-field""><span>Indicador</span><select data-chart-mode><option value=""otif"">OTIF</option><option value=""unitCost"">Custo por pedido</option></select></label>
+      " &
+    "    <div><h2>Tendência mensal</h2><p data-chart-caption></p></div>
+          <label class=""ld-field""><span>Indicador</span><select data-chart-mode><option value=""otif"">OTIF</option><option value=""unitCost"">Custo por pedido</option></select></label>
         </div>
         <div class=""ld-legend ld-strategy-legend""><span class=""ld-key-median"" data-median hidden></span></div>
         <div class=""ld-chart"" data-chart></div>
@@ -297,8 +324,8 @@ RETURN
       </div>
       <div class=""ld-table-wrap"" tabindex=""0"" aria-label=""Tabela comparativa com rolagem em telas estreitas"">
         <table class=""ld-table"">
-          <thead><tr><th scope=""col""><button type=""button"" data-sort=""label"">Transportadora<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""p"">Pedidos<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""otif"">OTIF<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""lead"">Prazo médio<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""unitCost"">Custo por pedido<span aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-extra hidden><button type=""button"" data-sort=""pe"">Elegíveis<span aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-e" &
-    "xtra hidden><button type=""button"" data-sort=""misses"">Falhas de OTIF<span aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-extra hidden><button type=""button"" data-sort=""cp"">Custo total<span aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-extra hidden><button type=""button"" data-sort=""co"">CO₂<span aria-hidden=""true"">↕</span></button></th></tr></thead>
+          <thead><tr><th scope=""col""><button type=""button"" data-sort=""label"">Transportadora<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""p"">Pedidos<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""otif"">OTIF<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""lead"">Prazo médio<span aria-hidden=""true"">↕</span></button></th><th scope=""col""><button type=""button"" data-sort=""unitCost"">Custo por pedido<span aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-extra hidden><button type=""button"" data-sort=""pe"">Elegíveis<span " &
+    "aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-extra hidden><button type=""button"" data-sort=""misses"">Falhas de OTIF<span aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-extra hidden><button type=""button"" data-sort=""cp"">Custo total<span aria-hidden=""true"">↕</span></button></th><th scope=""col"" data-table-extra hidden><button type=""button"" data-sort=""co"">CO₂<span aria-hidden=""true"">↕</span></button></th></tr></thead>
           <tbody data-table></tbody>
         </table>
       </div>
@@ -502,16 +529,132 @@ RETURN
     });
     root.addEventListener('keydown', e => { if (e.key === 'Escape') closeTooltip(); });
 
+  function mountPickers(root) {
+    const refreshers = [];
+    let closeActive = null;
+    for (const select of root.qu" &
+    "erySelectorAll('select')) {
+      const label = select.parentElement;
+      const caption = label.textContent.replace(select.textContent, '').trim();
+      const field = document.createElement('div');
+      field.className = label.className || 'ld-field';
+      field.setAttribute('data-hc-suppress', 'all');
+      const title = document.createElement('span');
+      title.textContent = caption;
+      const picker = document.createElement('div');
+      picker.className = 'ld-picker';
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.setAttribute('aria-haspopup', 'listbox');
+      toggle.setAttribute('aria-expanded', 'false');
+      const list = document.createElement('ul');
+      list.className = 'ld-picker-list';
+      list.setAttribute('role', 'listbox');
+      list.setAttribute('aria-label', caption);
+      list.hidden = true;
+      select.hidden = true;
+      label.replaceWith(field);
+      field.append(title, select, picker);
+      picker.append(toggle, list);
+
+      const refresh = () => {
+        const current = select.selectedOptions[0]?.label || 'Sem opções';
+        toggle.textContent = current;
+        toggle.setAttribute('aria-label', caption + ': ' + current);
+        toggle.disabled = select.disabled;
+      };
+      const close = (restore = false) => {
+        list.hidden = true;
+        toggle.setAttribute('aria-expanded', 'false');
+        if (closeActive === close) closeActive = null;
+        if (restore) toggle.focus({ preventScroll: true });
+      };
+      const open = (last = false) => {
+        closeActive?.();
+        closeActive = close;
+        const control = toggle.getBoundingClientRect();
+        const bottom = document.documentElement.clientHeight;
+        const below = bottom - control.bottom - 8;
+        const above = control.top - 8;
+        const flip = below < Math.min(240, select.options.length * 38 + 10) && above > below;
+        picker.toggleAttribute('data-above', flip);
+        list.s" &
+    "tyle.maxHeight = Math.max(80, Math.min(300, flip ? above : below)) + 'px';
+        const options = [...select.options].map((option, index) => {
+          const item = document.createElement('li');
+          item.setAttribute('role', 'option');
+          item.setAttribute('aria-selected', String(option.selected));
+          item.tabIndex = -1;
+          item.textContent = option.label;
+          item.addEventListener('click', () => {
+            select.selectedIndex = index;
+            close(true);
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+            refresh();
+          });
+          return item;
+        });
+        list.replaceChildren(...options);
+        list.hidden = false;
+        toggle.setAttribute('aria-expanded', 'true');
+        const initial = options[select.selectedIndex] ?? (last ? options.at(-1) : options[0]);
+        initial?.focus({ preventScroll: true });
+        if (initial) list.scrollTop = Math.max(0, initial.offsetTop - 8);
+      };
+      toggle.addEventListener('click', () => list.hidden ? open() : close(true));
+      toggle.addEventListener('keydown', event => {
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+          event.preventDefault();
+          open(event.key === 'ArrowUp');
+        }
+      });
+      list.addEventListener('keydown', event => {
+        const options = [...list.children];
+        const index = options.indexOf(event.target);
+        const next = {
+          ArrowDown: Math.min(options.length - 1, index + 1),
+          ArrowUp: Math.max(0, index - 1),
+          Home: 0,
+          End: options.length - 1
+        }[event.key];
+        if (next !== undefined) {
+          event.preventDefault();
+          options[next]?.focus();
+        } else if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          event.target.click();
+        }
+      });
+      picker.addEventListener('pointerdown', event => event.stopPropagation());
+      picker.addEv" &
+    "entListener('keydown', event => {
+        if (event.key === 'Escape' && !list.hidden) {
+          event.preventDefault();
+          event.stopPropagation();
+          close(true);
+        }
+      });
+      picker.addEventListener('focusout', event => {
+        if (!picker.contains(event.relatedTarget)) close();
+      });
+      select.addEventListener('change', refresh);
+      refreshers.push(refresh);
+      refresh();
+    }
+    root.addEventListener('pointerdown', () => closeActive?.());
+    return () => refreshers.forEach(refresh => refresh());
+  }
+
     const chart = find('chart');
     let chartData = [], chartMedian = null, contextOtif = null, chartWidth = 0;
-    co" &
-    "nst chartMode = find('chart-mode');
+    const chartMode = find('chart-mode');
     chartMode.value = memory.strategyChart || 'otif';
     chartMode.addEventListener('change', () => {
       memory.strategyChart = chartMode.value;
       closeTooltip();
       renderChart(true);
     });
+    const refreshPickers = mountPickers(root);
     function monthDetails(row) {
       const lines = describe({ ...row, label: monthLabel(row.label) + (monthIsPartial(data.meta, row.label) ? ' · período parcial' : '') });
       if (row.otif == null || contextOtif == null) return lines;
@@ -532,7 +675,8 @@ RETURN
       }
       const width = Math.max(1, Math.floor(chart.clientWidth));
       chartWidth = width;
-      const cost = chartMode.value === 'unitCost';
+      const cost " &
+    "= chartMode.value === 'unitCost';
       const metric = cost ? 'unitCost' : 'otif';
       const format = cost ? currency : percent;
       find('chart-caption').textContent = cost ? 'Custo logístico médio por pedido, em reais' :
@@ -540,10 +684,9 @@ RETURN
       const history = find('median');
       history.hidden = cost || chartMedian == null;
       history.textContent = history.hidden ? '' : 'Mediana mensal do recorte ' + fmt(chartMedian, percent);
-      const height = 266, left = 55, right = 16, top = 21, bottom = 34;
+      const height = 266, left = 66, right = 22, top = 21, bottom = 38;
       const plotWidth = Math.max(1, width - left - right), plotHeight = height - top - bottom, yBottom = height - bottom;
-      const maximum = cost ? Math.max(20, Mat" &
-    "h.ceil(Math.max(...chartData.map(row => row.unitCost ?? 0)) / 20) * 20) : 1;
+      const maximum = cost ? Math.max(20, Math.ceil(Math.max(...chartData.map(row => row.unitCost ?? 0)) / 20) * 20) : 1;
       const step = plotWidth / chartData.length;
       const svg = svgNode('svg', { class: 'ld-svg' + (animate ? ' ld-enter' : ''),
         viewBox: '0 0 ' + width + ' ' + height, role: 'group',
@@ -562,7 +705,8 @@ RETURN
       const path = [], dots = [], hits = [], every = Math.ceil(54 / step);
       let connected = false;
       chartData.forEach((row, index) => {
-        const x = left + step * (index + .5), partial = monthIsPartial(data.meta, row.label);
+        const x = left + step * (index + .5), partial = monthIsPartial(data.meta, ro" &
+    "w.label);
         if (index % every === 0 || index === chartData.length - 1 && index % every > every / 2) {
           svg.append(svgNode('text', { x, y: yBottom + 21, class: 'ld-axis' + (partial ? ' ld-axis-partial' : ''), 'text-anchor': 'middle' },
             compactMonth(row.label) + (partial ? '*' : '')));
@@ -573,8 +717,7 @@ RETURN
           dots.push(svgNode('circle', { cx: x, cy: y, r: 4, class: 'ld-otif-dot' }));
           connected = true;
         } else connected = false;
-        const hit = svgNode('rect', { x: left + step * index, y: top, width: step, height: p" &
-    "lotHeight, class: 'ld-hit' });
+        const hit = svgNode('rect', { x: left + step * index, y: top, width: step, height: plotHeight, class: 'ld-hit' });
         bindDetails(hit, monthLabel(row.label) + (partial ? ' · mês parcial' : '') + '\n' +
           (cost ? 'Custo por pedido ' + fmt(row.unitCost, format) : 'OTIF ' + fmt(row.otif, format) +
             ' · ' + fmt(row.q) + ' de ' + fmt(row.pe) + ' elegíveis') + '\n' + fmt(row.p) + ' pedidos');
@@ -602,7 +745,8 @@ RETURN
       const observed = months.map((row, index) => ({ index, value: row[metric] }))
         .filter(point => Number.isFinite(point.value));
       if (!observed.length) {
-        frame.setAttribute('aria-hidden', 'true');
+        fra" &
+    "me.setAttribute('aria-hidden', 'true');
         return frame;
       }
       const min = Math.min(...observed.map(point => point.value));
@@ -618,8 +762,7 @@ RETURN
         if (current && point.index === current.at(-1).index + 1) current.push(point);
         else runs.push([point]);
       }
-      const paths = runs.filter(run => run.length > 1)" &
-    ".map(run => {
+      const paths = runs.filter(run => run.length > 1).map(run => {
         let path = 'M ' + run[0].x + ' ' + run[0].y;
         for (let i = 1; i < run.length; i++) {
           const a = run[i-1], b = run[i];
@@ -641,7 +784,8 @@ RETURN
         for (const path of paths) svg.append(svgNode('path', { d: path.line, class: 'ld-spark-line' }));
       }
       const last = points.at(-1);
-      const latestPartial = monthIsPartial(data.meta, months[last.index].label);
+      const latestPar" &
+    "tial = monthIsPartial(data.meta, months[last.index].label);
       const dot = add('span', 'ld-spark-dot' + (latestPartial ? ' ld-partial' : ''));
       dot.style.left = 100 * last.x / 160 + '%';
       dot.style.top = 100 * last.y / 26 + '%';
@@ -652,20 +796,19 @@ RETURN
       frame.setAttribute('aria-label', label + ', tendência de ' + period + '. Último valor: ' +
         fmt(observed.at(-1).value, formatter, unit) + (latestPartial ? ' (período parcial).' : '.'));
       frame.append(svg, dot);
-      return" &
-    " frame;
+      return frame;
     }
 
     function renderCards(total, latest, previous, reference, previousKey, months, windowMatch) {
       const specs = [
-        ['p', 'Pedidos', number, '', fmt(total.en) + ' com entrega registrada'],
+        ['p', 'Pedidos', number, '', fmt(total.en) + ' com entrega registrada · ' + fmt(ratio(total.en, total.p), percent) + ' do total'],
         ['otif', 'OTIF', percent, '', fmt(total.q) + ' de ' + fmt(total.pe) + ' elegíveis'],
         ['unitCost', 'Custo por pedido', currency, '', fmt(total.cp, currency) + ' de custo total'],
         ['lead', 'Lead time médio', decimal, ' dias', fmt(total.ln) + ' entregas com lead time']
       ];
       const sparkMonths = months.slice(-12);
       find('kpis').replaceChildren(...specs.map(([key, label, format, unit, detail]) => {
-        const card = add('article', 'ld-card ld-enter');
+        const card = add('article', 'ld-card');
         card.dataset.metric = key;
         if (key === 'otif') card.dataset.primary = '';
         const value = add('strong', 'ld-value', fmt(total[key], format, unit));
@@ -675,7 +818,8 @@ RETURN
           const difference = latest[key] - previous[key];
           const sign = difference > 0 ? '+' : '';
           const percentage = ratio(difference, previous[key]);
-          const relative = percentage == null ? '' : sign + percent.format(percentage);
+          const relative" &
+    " = percentage == null ? '' : sign + percent.format(percentage);
           const points = key === 'otif' ? sign + decimal.format(difference * 100) + ' p.p.' : '';
           const change = key === 'otif' ? points : relative;
           const compareLabel = 'vs. mês anterior';
@@ -684,8 +828,7 @@ RETURN
           const improved = key === 'otif' ? difference > 0 : key === 'lead' ? difference < 0 : null;
           if (Math.abs(difference) > 1e-10 && improved !== null) delta.dataset.meaning = improved ? 'better' : 'worse';
           if (change) {
-            const arrow = add('span', '', difference > 1e-10 ? '▲" &
-    "' : difference < -1e-10 ? '▼' : '•');
+            const arrow = add('span', '', difference > 1e-10 ? '▲' : difference < -1e-10 ? '▼' : '•');
             arrow.setAttribute('aria-hidden', 'true');
             delta.append(arrow, add('strong', '', change), add('span', '', compareLabel));
             bindDetails(delta, label + ' · ' + comparisonPeriod + '\n' + change +
@@ -708,7 +851,8 @@ RETURN
       memory.tableDetails = !memory.tableDetails;
       renderTable();
     });
-    for (const button of sortButtons) {
+    for (const button of sortBut" &
+    "tons) {
       button.addEventListener('click', () => {
         const key = button.dataset.sort;
         sort.direction = sort.key === key ?
@@ -728,8 +872,7 @@ RETURN
       tableMore.textContent = expanded ? 'Menos colunas' : 'Mais colunas';
       for (const button of sortButtons) {
         const heading = button.closest('th');
-   " &
-    "     heading.hidden = !expanded && extraKeys.has(button.dataset.sort);
+        heading.hidden = !expanded && extraKeys.has(button.dataset.sort);
         const isActive = button.dataset.sort === sort.key;
         if (isActive) heading.setAttribute('aria-sort', sort.direction);
         else heading.removeAttribute('aria-sort');
@@ -748,7 +891,8 @@ RETURN
         const rank = add('span', 'ld-table-rank', '#' + (index + 1));
         rank.setAttribute('aria-label', 'Posição ' + (index + 1));
         heading.append(rank, add('span', 'ld-carrier-name', row.label));
-        el.dataset.sortValue = row[sort.key] ?? '';
+        el.dataset.sortValue = row[sort.key] ??" &
+    " '';
         el.append(heading, add('td', '', fmt(row.p)));
         const rate = add('span', 'ld-table-rate');
         if (row.otif == null) rate.textContent = '—';
@@ -760,8 +904,7 @@ RETURN
           mark.setAttribute('aria-hidden', 'true');
           rate.append(mark, add('span', '', fmt(row.otif, percent)));
           bindDetails(rate, row.label + ' · OTIF ' + fmt(row.otif, percent) + '\n' +
-            fmt(row.q) + ' de ' + fmt(row.pe) + ' pedidos e" &
-    "legíveis\n' +
+            fmt(row.q) + ' de ' + fmt(row.pe) + ' pedidos elegíveis\n' +
             (relative === 'above' ? 'Acima do' : relative === 'below' ? 'Abaixo do' : 'Igual ao') +
             ' OTIF do recorte (' + fmt(contextOtif, percent) + ')');
         }
@@ -779,6 +922,7 @@ RETURN
     }
 
     function render() {
+      refreshPickers();
       closeTooltip();
       const filters = fields.filter(([key]) => selected[key]);
       const matches = (row, constraints) => constraints.every(([key]) => row[key] === selected[key]);
@@ -786,7 +930,8 @@ RETURN
       const months = group(rows, 'm').sort((a, b) => collator.compare(a.label, b.label));
       const period = months.length < 2 ? monthLabel(months[0]?.label) :
         monthLabel(months[0].label) + ' a ' + monthLabel(months.at(-1).label);
-      find('period').textContent = rows.length ?
+      find('period').textConten" &
+    "t = rows.length ?
         period + ' · por data do pedido' + (data.meta.dataFinal ? ' · recorte Power BI até ' + data.meta.dataFinal.split('-').reverse().join('/') : '') :
         'Sem pedidos no recorte';
       find('clear').disabled = !filters.length;
@@ -798,8 +943,7 @@ RETURN
           'Nenhum pedido corresponde à combinação selecionada. Ajuste ou limpe os filtros internos.' :
           'Nenhum pedido no recorte atual do Power BI.';
         chartData = [];
-        for (const name of ['kpis', 'chart', 'insights', 'table', 'priority', 'period-note']) f" &
-    "ind(name).replaceChildren();
+        for (const name of ['kpis', 'chart', 'insights', 'table', 'priority', 'period-note']) find(name).replaceChildren();
         return;
       }
       const total = tally(rows);
@@ -816,7 +960,8 @@ RETURN
       const comparableRegions = regions.filter(row => row.pe > 0);
       const lowestRegion = comparableRegions.length > 1 ? ascendingOtif(comparableRegions).find(row => row.misses > 0) : null;
       const impactRegion = descending(regions, 'misses')[0];
-      const serviceHeadline = total.pe ? 'OTIF de ' + fmt(total.otif, percent) + ' no recorte. ' : 'Sem pedidos elegíveis para OTIF. ';
+      const serviceHeadline = tot" &
+    "al.pe ? 'OTIF de ' + fmt(total.otif, percent) + ' no recorte. ' : 'Sem pedidos elegíveis para OTIF. ';
       const focusHeadline = impactRegion?.misses ? (comparableRegions.length > 1 ?
         'Investigue ' + impactRegion.label + ': ' + fmt(impactRegion.misses) + ' das ' + fmt(total.misses) + ' falhas de OTIF.' :
         fmt(total.misses) + ' falhas de OTIF entre ' + fmt(total.pe) + ' elegíveis.') :
@@ -824,8 +969,7 @@ RETURN
       find('priority').replaceChildren(add('strong', '', serviceHeadline), document.createTextNode(focusHeadline));
       const anyPartial = months.some(row=>monthIsPartial(data.meta,row.label));
       find('period-note').textContent = 'Cards resumem o recorte. ' + (prior ?
-        'Comparação mensal: ' + compa" &
-    "ctMonth(latest.label) + ' vs. ' + compactMonth(priorKey) +
+        'Comparação mensal: ' + compactMonth(latest.label) + ' vs. ' + compactMonth(priorKey) +
         (windowMatch.partial && windowMatch.label ? ' · ' + windowMatch.label + '.' : '.') : 'Sem comparação mensal no recorte.') +
         (anyPartial ? ' * Mês parcial.' : '');
       renderCards(total, latestComparable, prior, latest.label, priorKey, months, windowMatch);
@@ -839,7 +983,8 @@ RETURN
         insights.push([heading, volume + (isAlsoLowest ? ' OTIF de ' + fmt(impactRegion.otif, percent) + '.' : '') +
           ' Revise as ocorrências para identificar ações.']);
       }
-      if (lowestRegion && lowestRegion.label !== impactRegion?.label) insights.push(['Menor OTIF · ' + lowestRegion.label,
+      if (lowestRegion && lowestRegion.label !== impactRegion?.label) insights.push(['Menor OTIF · ' + lowestRegion.la" &
+    "bel,
         fmt(lowestRegion.otif, percent) + ' de OTIF, com ' + fmt(lowestRegion.misses) +
         ' falhas em ' + fmt(lowestRegion.pe) + ' elegíveis. Investigue a recorrência das falhas.']);
       if (!insights.length) insights.push(['Nível de serviço', total.pe ?
@@ -855,8 +1000,7 @@ RETURN
       renderChart(true);
       tableRows = carriers;
       renderTable();
-" &
-    "    }
+    }
     render();
   } catch (error) {
     stateText.textContent = 'Não foi possível carregar o painel. Verifique a medida Gold e o suporte a scripts do visual.';

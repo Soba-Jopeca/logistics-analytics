@@ -6,7 +6,7 @@ RETURN
   --op-bg:#edf2f6; --op-paper:#fff; --op-soft:#f5f8fb; --op-ink:#142638; --op-muted:#4c6175; --op-border:#d8e1e9;
   --op-head:#112c42; --op-on-head:#f3f9ff; --op-head-muted:#bbd1e2; --op-accent:#006d64; --op-accent-soft:#e3f4ee;
   --op-delay:#a1283d; --op-delay-soft:#fff0f2; --op-track:#dce6ed;
-  --op-font:""Inter"",""Segoe UI"",sans-serif; --op-xs:.81rem; --op-sm:.91rem; --op-gap:12px; --op-pad:16px;
+  --op-font:""Inter"",""Segoe UI"",sans-serif; --op-xs:.91rem; --op-sm:1rem; --op-gap:12px; --op-pad:16px;
   --op-radius:13px; --op-round:7px; --op-space:clamp(10px,2vw,24px);
   container: op-layout / inline-size; box-sizing:border-box; padding:var(--op-space);
   background:var(--op-bg); color:var(--op-ink); font:400 1rem/1.4 var(--op-font); text-align:left;
@@ -23,8 +23,8 @@ RETURN
 .op-filters,.op-panel,.op-card,.op-state { min-width:0; background:var(--op-paper); border:1px solid var(--op-border); border-radius:var(--op-radius); padding:var(--op-pad); }
 .op-filters { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)) auto; align-items:end; gap:var(--op-gap); }
 .op-root label { min-width:0; display:grid; gap:4px; color:var(--op-muted); font-size:var(--op-xs); font-weight:650; }
-.op-root select,.op-root button { min-width:0; min-height:36px; padding:6px 9px; border:1px solid var(--op-border); border-" &
-    "radius:var(--op-round); color:var(--op-ink); background:var(--op-soft); font:500 var(--op-sm) var(--op-font); }
+.op-root select,.op-root button { min-width:0; min-height:36px; padding:6px 9px; border:1px solid var(--op-border); border-ra" &
+    "dius:var(--op-round); color:var(--op-ink); background:var(--op-soft); font:500 var(--op-sm) var(--op-font); }
 .op-root button { cursor:pointer; }
 .op-root button:disabled { opacity:.6; cursor:default; }
 .op-kpis { display:grid; gap:var(--op-gap); grid-template-columns:repeat(3,minmax(0,1fr)); }
@@ -48,8 +48,8 @@ RETURN
 .op-state { margin-top:var(--op-gap); }
 @container op-layout (max-width:640px) {
   .op-source { text-align:left; }
-  .op-filters { gr" &
-    "id-template-columns:repeat(2,minmax(0,1fr)); }
+  .op-filters { grid" &
+    "-template-columns:repeat(2,minmax(0,1fr)); }
 }
 @container op-layout (max-width:350px) {
   .op-card,.op-filters,.op-panel { padding:10px; }
@@ -58,10 +58,72 @@ RETURN
 .op-table-wrap { max-height: min(410px, 55vh); overflow:auto; }
 .op-root thead th { position:sticky; top:0; z-index:1; }
 
-</style><div class=""op-root"" lang=""pt-BR"">
+.op-picker { position:relative; min-width:0; }
+.op-picker > button { width:100%; min-height:40px; display:flex; align-items:center; justify-content:space-between; gap:10px; text-align:left; padding:7px 10px; color:var(--op-ink); background:var(--op-soft); border:1px solid var(--op-border); border-radius:7px; font:600 .91rem/1.3 var(--op-font); cursor:pointer; overflow-wrap:anywhere; }
+.op-picker > button::after { content:""""; flex:none; width:7px; height:7px; margin-inline-end:3px; border:solid currentColor; border-width:0 2px 2px 0; transform:rotate(45deg) translateY(-2px); }
+.op-picker > button[aria-expanded=""true""] { border-color:var(--op-accent); }
+.op-picker-list { position:absolute; z-index:15; inset:calc(100% + 4px) 0 auto; margin:0; padding:4px; list-style:none; overflow:auto; overscroll-behavior:contain; color:var(--op-ink); background:var(--op-paper); border:1px solid var(--op-border); border-radius:8px; box-shadow:0 6px 16px #0d263029; }
+.op-picker[data-above] > .op-picker-list { inset:auto 0 calc(100% + 4px); }
+.op-picker-list > li { min-height:34px; display:flex; align-items:center; padding:6px 8px; border-radius:5px; cursor:pointer; font:500 .91rem/1.3 var(--op-font); overflow-wrap:anywhere; }
+.op-picker-list > [aria-selected=""true""] { font-weight:700; color:var(--op-accent); background:var(--op-accent-soft); }
+.op-picker-list > li:hover,.op-picker-list > li:focus { background:var(--op-soft); outline:2px solid var(--op-accent); outline-offset:-2px; }
+
+.op-root { --op-pad:14px; }
+.op-field { min-width:0; display:grid; gap:4px; color:var(--op-muted); font-size:var(--op-xs); font-weight:650; }
+.op-analysis { display:grid; gap:var(--op-gap); grid-template-columns:minmax(0, 1.42fr) minmax(0, 1fr); }" &
+    "
+.op-concentration .op-panel-head { align-items:start; }
+.op-concentration .op-field { min-inline-size:min(174px, 100%); }
+.op-rank { gap:7px; }
+.op-rank-label { display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:baseline; }
+.op-rank-label strong { font-variant-numeric:tabular-nums; white-space:nowrap; }
+.op-rank-label > span { overflow-wrap:anywhere; }
+.op-rank-bar { height:8px; background:var(--op-track); }
+.op-rank-fill { background:#9f263a; }
+.op-panel h2 { font-size:1.18rem; line-height:1.25; }
+.op-panel h2 + p { margin-top:3px; }
+.op-next { align-content:start; }
+.op-next [data-op-next] { display:grid; gap:5px; margin-top:10px; overflow-wrap:anywhere; }
+.op-next strong { font-size:1.34rem; font-variant-numeric:tabular-nums; color:var(--op-ink); }
+.op-next .op-status { justify-self:start; }
+.op-card strong { line-height:1.14; font-size:clamp(1.6rem,2.55cqi,2.2rem); }
+.op-root thead th { white-space:normal; line-height:1.2; }
+.op-root table { min-width:700px; }
+@container op-layout (max-width:750px) {
+  .op-analysis { grid-template-columns:minmax(0,1fr); }
+}
+@container op-layout (max-width:410px) {
+  .op-kpis { grid-template-columns:minmax(0,1fr); }
+}
+
+.op-rank-label { grid-template-columns:minmax(130px,1.25fr) minmax(0,2.5fr) auto; align-items:center; min-block-size:24px; }
+.op-rank-bar { margin-top:0; min-width:0; }
+.op-rank-label strong { text-align:right; min-inline-size:68px; }
+@container op-layout (max-width:520px) {
+  .op-rank-label { grid-template-columns:minmax(0,1fr) auto; gap:3px 8px; }
+  .op-rank-label strong { grid-column:2; grid-row:1; }
+  .op-rank-bar { grid-column:1 / -1; grid-row:2; }
+}
+
+
+.op-source .op-theme { justify-self:end; min-height:36px; margin-block-end:5px; padding:6px 13px;
+  background:var(--op-head); color:var(--op-on-head); border-color:var(--op-head-muted); }
+.op-source .op-theme:focus-visible { outline-color:var(--op-on-head); }
+.op-root[data-theme=""dark""] {
+  --op-bg:#0d1824; --op-paper:#132638; --op-soft:#1a30" &
+    "43; --op-ink:#edf5fa; --op-muted:#bacddd;
+  --op-border:#324c61; --op-head:#173247; --op-on-head:#f3f9ff; --op-head-muted:#bcd3e3;
+  --op-accent:#89e1ce; --op-accent-soft:#204240; --op-delay:#ffafbf; --op-delay-soft:#452635; --op-track:#324b5c;
+  color-scheme:dark; }
+.op-root[data-theme=""dark""] .op-rank-fill { background:var(--op-delay); }
+@container op-layout (max-width:640px) {
+  .op-source .op-theme { justify-self:start; }
+}
+
+</style><div class=""op-root"" data-theme=""light"" lang=""pt-BR"">
 <header class=""op-head"">
   <div><h1>Operação logística</h1><p>Carteira ativa na posição registrada da base</p></div>
-  <div class=""op-source""><span data-op-reference></span><span>Base simulada · TabelaBaseLogistica</span></div>
+  <div class=""op-source""><button type=""button"" class=""op-theme"" data-op-theme data-hc-suppress=""all"">Modo escuro</button><span data-op-reference></span><span>Base simulada · TabelaBaseLogistica</span></div>
 </header>
 <p class=""op-state"" role=""status"" data-op-state>Carregando a carteira…</p>
 <main data-op-body hidden>
@@ -72,17 +134,24 @@ RETURN
     <button type=""button"" data-op-clear>Limpar filtros</button>
   </div>
   <section class=""op-kpis"" data-op-kpis aria-label=""Carteira ativa""></section>
-  <section class=""op-panel"">
-    <div class=""op-panel-head""><div><h2>Onde se concentram os atrasos?</h2><p>Pedidos com status Atrasado no recorte</p></div>
-      <label>Detalhar por<select data-op-group><option value=""t"">Transportadora</option><option value=""r"">Região</option><option value=""mot"">Motivo registrado</option></select></label>
-    </div>
-    <div class=""op-rank"" data-op-rank></div>
-  </section>
+  <div class=""op-analysis"">
+    <section class=""op-panel op-concentration"">
+      <div class=""op-panel-head""><div><h2>Onde se concentram os atrasos?</h2><p data-op-rank-note></p></div>
+        <label>Detalhar por<select data-op-group><option value=""t"">Transportadora</option><option value=""r"">Região</option><option value=""mot"">Motivo registrado</option></select></label>
+      </div>
+      <div class=""op-rank"" data-op-rank></div>
+    </section>
+    <section class=""op-panel op-next"" aria-labelledby=""op-next-heading"">
+      <h2 id=""op-next-heading"">Primeiro pedido a revisar</h2>
+      <p data-op-next-reason></p>
+      <div data-op-next" &
+    "></div>
+    </section>
+  </div>
   <section class=""op-panel"">
     <div class=""op-panel-head""><div><h2>Fila de pedidos</h2><p>Atrasados primeiro. Dentro de cada status, a previsão mais antiga aparece no topo.</p></div><span data-op-count></span></div>
     <div class=""op-table-wrap"" tabindex=""0"" aria-label=""Fila de pedidos com rolagem em telas estreitas"">
-      <table><thead><tr><th scope=""col"">Pedido</th><th scope=""col"">Status</th><th scope=""col"">Transportadora</th><th scope=""col"">Destino</th><th scope=""col"">Entrega prevista</th><th scope=" &
-    """col"">Motivo registrado</th></tr></thead><tbody data-op-queue></tbody></table>
+      <table><thead><tr><th scope=""col"">Pedido</th><th scope=""col"">Status</th><th scope=""col"">Transportadora</th><th scope=""col"">Destino</th><th scope=""col"">Entrega prevista</th><th scope=""col"">Motivo registrado</th></tr></thead><tbody data-op-queue></tbody></table>
     </div>
   </section>
 </main>
@@ -94,6 +163,17 @@ RETURN
     [...document.querySelectorAll('.op-root:not([data-op-ready])')].at(-1);
   if (!root || root.hasAttribute('data-op-ready')) return;
   root.setAttribute('data-op-ready', '');
+  const theme = root.querySelector('[data-op-theme]');
+  function setTheme(value) {
+    root.dataset.theme = value;
+    const dark = value === 'dark';
+    const label = dark ? 'Modo claro' : 'Modo escuro';
+    theme.textContent = label;
+    theme.setAttribute('aria-label', dark ? 'Alternar para o modo claro' : 'Alternar para o modo escuro');
+  }
+  setTheme(root.dataset.theme);
+  theme.addEventListener('click', () => setTheme(root.dataset.theme === 'dark' ? 'light' : 'dark'));
+
   const find = key => root.querySelector('[data-op-' + key + ']');
   const state = find('state');
   const body = find('body');
@@ -103,11 +183,127 @@ RETURN
     if (text != null) element.textContent = text;
     return element;
   };
+  function mountPickers(root) {
+    const refreshers = [];
+    let closeActive = null;
+    for (const select of root.querySelectorAll('select')) {
+      const label = select.parentElement;
+      const caption = label.textContent.replace(select.textContent, '').trim();
+      const field = document.createElement('div');
+      field.className = label.className || 'op-field';
+      field.setAttribute('data-hc-suppress', 'all');
+      const title = document.createElement('span');
+      title.textContent = caption;
+      const picker = document.createElement('div');
+      picker.className = 'op-picker';
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.setAttribute('aria-haspopup', 'listbox');
+      toggle.setAttribute('aria-expanded', 'false');
+      const list = document.createElement('ul');
+      list.className = 'op-picker-list';
+      list.setAttribute" &
+    "('role', 'listbox');
+      list.setAttribute('aria-label', caption);
+      list.hidden = true;
+      select.hidden = true;
+      label.replaceWith(field);
+      field.append(title, select, picker);
+      picker.append(toggle, list);
+
+      const refresh = () => {
+        const current = select.selectedOptions[0]?.label || 'Sem opções';
+        toggle.textContent = current;
+        toggle.setAttribute('aria-label', caption + ': ' + current);
+        toggle.disabled = select.disabled;
+      };
+      const close = (restore = false) => {
+        list.hidden = true;
+        toggle.setAttribute('aria-expanded', 'false');
+        if (closeActive === close) closeActive = null;
+        if (restore) toggle.focus({ preventScroll: true });
+      };
+      const open = (last = false) => {
+        closeActive?.();
+        closeActive = close;
+        const control = toggle.getBoundingClientRect();
+        const bottom = document.documentElement.clientHeight;
+        const below = bottom - control.bottom - 8;
+        const above = control.top - 8;
+        const flip = below < Math.min(240, select.options.length * 38 + 10) && above > below;
+        picker.toggleAttribute('data-above', flip);
+        list.style.maxHeight = Math.max(80, Math.min(300, flip ? above : below)) + 'px';
+        const options = [...select.options].map((option, index) => {
+          const item = document.createElement('li');
+          item.setAttribute('role', 'option');
+          item.setAttribute('aria-selected', String(option.selected));
+          item.tabIndex = -1;
+          item.textContent = option.label;
+          item.addEventListener('click', () => {
+            select.selectedIndex = index;
+            close(true);
+            select.dispatchEvent(new Event('change', { bubbles: true }));
+            refresh();
+          });
+          return item;
+        });
+        list.replaceChildren(...options);
+        list.hidden = false;
+        toggle.setAttribute('aria-expanded', 'true');
+        const ini" &
+    "tial = options[select.selectedIndex] ?? (last ? options.at(-1) : options[0]);
+        initial?.focus({ preventScroll: true });
+        if (initial) list.scrollTop = Math.max(0, initial.offsetTop - 8);
+      };
+      toggle.addEventListener('click', () => list.hidden ? open() : close(true));
+      toggle.addEventListener('keydown', event => {
+        if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
+          event.preventDefault();
+          open(event.key === 'ArrowUp');
+        }
+      });
+      list.addEventListener('keydown', event => {
+        const options = [...list.children];
+        const index = options.indexOf(event.target);
+        const next = {
+          ArrowDown: Math.min(options.length - 1, index + 1),
+          ArrowUp: Math.max(0, index - 1),
+          Home: 0,
+          End: options.length - 1
+        }[event.key];
+        if (next !== undefined) {
+          event.preventDefault();
+          options[next]?.focus();
+        } else if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          event.target.click();
+        }
+      });
+      picker.addEventListener('pointerdown', event => event.stopPropagation());
+      picker.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !list.hidden) {
+          event.preventDefault();
+          event.stopPropagation();
+          close(true);
+        }
+      });
+      picker.addEventListener('focusout', event => {
+        if (!picker.contains(event.relatedTarget)) close();
+      });
+      select.addEventListener('change', refresh);
+      refreshers.push(refresh);
+      refresh();
+    }
+    root.addEventListener('pointerdown', () => closeActive?.());
+    return () => refreshers.forEach(refresh => refresh());
+  }
   try {
     const { referencia, pedidos } = JSON.parse(root.querySelector('.op-data').textContent);
     if (!Array.isArray(pedidos)) throw new Error('Fila operacional ausente');
     const number = new Intl.NumberFormat('pt-BR');
-    const percent = new Intl.NumberFormat('pt-BR',{style:'percent',maximumFractionDigits:0});
+    con" &
+    "st percent = new Intl.NumberFormat('pt-BR',{style:'percent',maximumFractionDigits:0});
+    const portfolioShare = new Intl.NumberFormat('pt-BR', { style: 'percent', maximumFractionDigits: 1 });
     const collator = new Intl.Collator('pt-BR');
     const date = value => value ? value.split('-').reverse().join('/') : '—';
     const isLate = row => row.s === 'Atrasado';
@@ -126,26 +322,30 @@ RETURN
       const key = control.dataset.opFilter;
       const options = [...new Set(pedidos.map(row => row[key]).filter(Boolean))].sort(collator.compare);
       control.append(new Option('Todos', ''), ...options.map(value => new Option(value,value)));
-      cont" &
-    "rol.addEventListener('change',render);
+      control.addEventListener('change',render);
     }
     clear.addEventListener('click',() => {
       for (const control of filters) control.value = '';
       render();
     });
     groupBy.addEventListener('change',render);
+    const refreshPickers = mountPickers(root);
     function render() {
+      refreshPickers();
       body.hidden = false;
       const active = filters.filter(control => control.value);
       const rows = pedidos.filter(row => active.every(control => row[control.dataset.opFilter] === control.value));
       const delayed = rows.filter(isLate);
       clear.disabled = !active.length;
       state.hidden = Boolean(rows.length);
-      if (!rows.length) state.textContent = 'Nenhum pedido corresponde a essa combinação de filtros.';
+      if (!rows.length) state.textContent = 'Nenhum pedido corresponde a essa combinação de fi" &
+    "ltros.';
+      const transit = rows.filter(row => row.s === 'Em trânsito');
+      const share = count => rows.length ? portfolioShare.format(count / rows.length) + ' da carteira no recorte' : 'Sem pedidos no recorte';
       const specs = [
-        ['Em aberto', rows.length, 'Status Atrasado ou Em trânsito'],
-        ['Atrasados', delayed.length, 'Status registrado na fonte'],
-        ['Em trânsito', rows.filter(row=>row.s === 'Em trânsito').length, 'Status registrado na fonte']
+        ['Em aberto', rows.length, rows.length ? 'Atrasados e em trânsito no recorte' : 'Sem pedidos no recorte'],
+        ['Atrasados', delayed.length, share(delayed.length)],
+        ['Em trânsito', transit.length, share(transit.length)]
       ];
       find('kpis').replaceChildren(...specs.map(([label,value,detail])=>{
         const card = add('article','op-card');
@@ -155,6 +355,27 @@ RETURN
         card.append(add('span','op-card-label',label),amount,add('p','',detail));
         return card;
       }));
+      find('rank-note').textContent = number.format(delayed.length) +
+        (delayed.length === 1 ? ' pedido com status Atrasado no recorte' : ' pedidos com status Atrasado no recorte');
+
+      rows.sort(sort);
+      const next = rows[0];
+      const nextDetails = find('next');
+      nextDetails.replaceChildren();
+      find('next-reason').textContent = !next ? 'A fila está vazia neste recorte.' : next.pre ?
+        (isLate(next) ? 'Atrasado com a previsão mais antiga do recorte.' : 'Em trânsito com a previsão mais próxima do recorte.') :
+        'Primeiro da fila no recorte. Entrega prevista não registrada.';
+      if (next) {
+        const status = add('span', 'op-status', next.s);
+        status.dataset.status = next.s;
+        const route = [next.t, [next.cid, next.uf].filter(Boolean).join(' · ')].filter(Boolean);
+        nextDetails.append(add('strong', '', next.id), status,
+          add('p', '', 'Entrega prevista: ' + date(next.pre)));
+        if (route.length) nextDetails.append(add('p', '', route.join(' / ')));
+        if (next.mot) nextDetails.append(add('p', '', 'Motivo registrado: '" &
+    " + next.mot));
+      }
+
       const totals = new Map();
       const grouping = groupBy.value;
       for (const row of delayed) {
@@ -166,18 +387,19 @@ RETURN
       const rest = ranked.slice(5).reduce((n,row)=>n+row[1],0);
       if (rest) top.push(['Demais',rest]);
       find('rank').replaceChildren(...(top.length ? top.map(([name,count])=>{
-        const line = add('div'), label = add('div','op-rank-label');
-        labe" &
-    "l.append(add('span','',name),add('strong','',number.format(count)+' · '+percent.format(count/delayed.length)));
-        const track = add('span','op-rank-bar'), fill = add('span','op-rank-fill');
-        fill.style.width = count/delayed.length*100+'%';
-        track.setAttribute('aria-hidden','true');
+        const line = add('div', 'op-rank-label');
+        const track = add('span', 'op-rank-bar');
+        const fill = add('span', 'op-rank-fill');
+        const share = count / delayed.length;
+        fill.style.width = share * 100 + '%';
+        track.setAttribute('aria-hidden', 'true');
         track.append(fill);
-        line.append(label,track);
+        line.append(add('span', 'op-rank-name', name), track,
+          add('strong', '', number.format(count) + ' · ' + percent.format(share)));
         return line;
       }) : [add('p','op-rank-empty','Sem pedidos com status Atrasado neste recorte.')]));
       find('count').textContent = number.format(rows.length) + (rows.length === 1 ? ' pedido' : ' pedidos');
-      find('queue').replaceChildren(...rows.sort(sort).map(row=>{
+      find('queue').replaceChildren(...rows.map(row=>{
         const line = add('tr'), id = add('th','',row.id), status = add('td'), pill = add('span','op-status',row.s);
         id.scope = 'row';
         pill.dataset.status = row.s;
