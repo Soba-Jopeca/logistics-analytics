@@ -181,4 +181,4 @@ A autoria assistida por IA ficou verificável. A planilha, as consultas Power Qu
 
 ## Autor
 
-**João Caneca** · [Projetos no portfólio](https://soba-jopeca.github.io/projetos.html)
+**João Caneca** · [Logistics Analytics no portfólio](https://soba-jopeca.github.io/projetos/logistics-analytics.html)
